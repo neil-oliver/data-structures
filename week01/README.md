@@ -1,7 +1,7 @@
 # Week 01 Task
 Task instructions provided by [Aaron Hill](https://github.com/aaronxhill) can be found [here](https://github.com/visualizedata/data-structures/blob/master/weekly_assignment_01.md)
 
-The project has two dependecies, [request](https://www.npmjs.com/package/request) and [fs](https://www.npmjs.com/package/fs)
+The project has two dependencies, [request](https://www.npmjs.com/package/request) and [fs](https://www.npmjs.com/package/fs)
 
 The task requires 10 URL's to be requested and saved as text files programatically. 
 
