@@ -80,7 +80,7 @@ fs.writeFileSync('/home/ec2-user/environment/data/AA-data-' + num + '.txt', body
 This issue with this approach is that the requested data is not returned before the next request is made. This means that the initial index value has changed.
 In mulitple tests, all requests using the `num` value of 10 (all requests completed), which meant that it constantly overwrote the previously saved file.
 
-## Solution
+## (previous) Solution
 To overcome this issue a sepatate counter was implemented, which was increased every time a file was saved, ensuring that all files are given a unique filename.
 
 ```javascript
@@ -94,6 +94,23 @@ To overcome this issue a sepatate counter was implemented, which was increased e
         else {console.log(error)}
     });
 
+```
+
+## Solution Update
+This update is in reference to the latest commit dated 08/29/2019
+While the solution detailed above functioned correctly, the use of an additional variable for incrementing the save filename was unnecessary. The initial problem where the iterator being used in the filename was changing between loop iterations can be overcome by changing the method of the iterator declaration. 
+
+[Javascript ES6]( https://developer.mozilla.org/en-US/docs/Web/JavaScript/New_in_JavaScript/ECMAScript_2015_support_in_Mozilla) included the support for the `let` variable declaration which has the following advantages for use in this task:
+
+_***let*** allows you to declare variables that are limited in scope to the block, statement, or expression on which it is used. This is unlike the ***var*** keyword, which defines a variable globally, or locally to an entire function regardless of block scope._ 
+[source](https://medium.com/front-end-developers/es6-variable-scopes-in-loops-with-closure-9cde7a198744)
+
+This means that by implementing the `let` declaration in place of `var`, the iterator value will remain the same for both the request and the save command. The resulting code is as follows:
+
+```javascript
+for (let i = 0; i < 10; i++) {
+        let num = 0;
+...
 ```
 
 All code is commented in addition to this README.
