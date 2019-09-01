@@ -45,14 +45,17 @@ $('tr tr tr').each(function(i, item) {
 
 ## Breaking down the data
 Within the resulting data there are three table data sections, the location details, the times of the meeting and additional details and links.
-The data from each of these sections is extracted using ```var location = $(this).children().eq(0).text().split('\n').map(item => item.trim()).filter(Boolean)``` changing the index to access each section.
+The data from each of these sections is extracted using the following code (changing the index to access each section).
+```javascript
+var location = $(this).children().eq(0).text().split('\n').map(item => item.trim()).filter(Boolean)
+``` 
 
 ```$(this).children().eq(0).text()``` accesses the initial information in each table data section.
 ```.split('\n')``` Splits the data at each line break creating an array of separate items.
 ```.map(item => item.trim())``` strips out the additional whitespace around each of the items.
 ```.filter(Boolean)``` ensures that no blank elements are saved into the array.
 
-The name of each of the meetings is seapated out separately by searching for the ```<h4> tag in the table data ```var name = $(this).find('h4').text();```
+The name of each of the meetings is seapated out separately by searching for the ```<h4>``` tag in the table data ```var name = $(this).find('h4').text();```
 
 The name, location and meeting times are combined into an object and added to the meetings array. The array is then returned.
 
