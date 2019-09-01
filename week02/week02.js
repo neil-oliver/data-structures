@@ -36,15 +36,22 @@ function getMeetings(file, meetings){
     
     // Traverse the DOM model produced by Cheerio down three table rows deep
     $('tr tr tr').each(function(i, item) {
+        
+        var name = $(this).find('h4').text();
+        var location = $(this).children().eq(0).text().split('\n').map(item => item.trim()).filter(Boolean);
+        var times = $(this).children().eq(1).text().split('\n').map(item => item.trim()).filter(Boolean);
+        
         // Add a new meeting object to the end of the existing meetings aray
         meetings[meetings.length] = {
-            'Name' : $(this).find('h4').text(),
-            'Location' : $(this).children().eq(0).text(),
-            'Times' : $(this).children().eq(1).text(),
+            'Name' : name,
+            'Location' : location,
+            'Times' : times
         };
         
         // Print confirmation that the meeting details have been added
-        console.log('Details for ' + $(this).find('h4').text() + ' have been added.')
+        console.log('Details for ' + name + ' have been added.')
+        //console.log('The address is: ' + location.join(' '))
+        //console.log('The times of the meetings are: ' + times.join( ))
     });
     
     // Return updated meetings array    
