@@ -3,21 +3,20 @@ Task instructions provided by [Aaron Hill](https://github.com/aaronxhill).
 
 The project has three dependencies, [request](https://www.npmjs.com/package/request), [fs](https://www.npmjs.com/package/fs) and [Cheerio](https://www.npmjs.com/package/cheerio).
 
-The task requires the information from [Task 01](https://github.com/visualizedata/data-structures/blob/master/weekly_assignment_01.md) to be broken down into a usable data structure. 
+Full instructions for this tasks can be found on the Parsons MSDV [Data Structures GitHub Page](https://github.com/visualizedata/data-structures/blob/master/weekly_assignment_02.md).
+This task focuses on parsing a single HTML file (saved in a [previous task](https://github.com/neil-oliver/data-structures/tree/master/week01)) and resaving the data in a reusable format. 
 
-Details of the previous solution can be found [here](https://github.com/neil-oliver/data-structures/tree/master/week01)
+**The solution detailed below creates a saved CSV file containing the addresses of 53 AA Meetings, which matches the number of meetings listed in the [M07.html](https://parsons.nyc/aa/m07.html) file.**
 
 ## Reloading Saved Data
-The reloading code was separated out into a function for easier implementation or resuse within future developments.
-The code used the same loop approach as the previous task, with the save code being replaced with the following code.
+The information from the previous task can be reloaded into a string variable with the file system module.
 
 ```javascript
-fs.readFile('/home/ec2-user/environment/week01/data/AA-data-'+ num +'.txt', 'utf8', (error, data) => {
+fs.readFile('/home/ec2-user/environment/week01/data/AA-data-07.txt', 'utf8', (error, data) => {
   if (error) throw error;
-  getMeetings(data, meetings);
+  ...
 });
 ```
-On loading the saved data, a scraping function is called, passing it both the saved data and an (initially empty) array of meeting details.
 
 ## Finding the usable data
 The data is loaded into Cheerio ```const $ = cheerio.load(file);``` to parse the data into a traverable DOM model.
@@ -36,37 +35,77 @@ The details are within three table rows.
 </table>
 ```
 
-This is achieved with the following code
+This is achieved with the following code:
 
 ```javascript
 $('tr tr tr').each(function(i, item) {
 });
 ```
 
+The first set of data that is received is the table headings. These can be skipped using the index value
+```javascript
+if (i != 0){
+    ...
+}
+```
+
 ## Breaking down the data
 Within the resulting data there are three table data sections, the location details, the times of the meeting and additional details and links.
 The data from each of these sections is extracted using the following code (changing the index to access each section).
+The first of these sections contains all of the information we require for this task, plus some additional details. This section can be accessed through the following code:
 ```javascript
-var location = $(this).children().eq(0).text().split('\n').map(item => item.trim()).filter(Boolean)
+$(this).children().eq(0).text()
 ``` 
 
-```$(this).children().eq(0).text()``` accesses the initial information in each table data section.
-```.split('\n')``` Splits the data at each line break creating an array of separate items.
-```.map(item => item.trim())``` strips out the additional whitespace around each of the items.
-```.filter(Boolean)``` ensures that no blank elements are saved into the array.
-
-The name of each of the meetings is seapated out separately by searching for the ```<h4>``` tag in the table data ```var name = $(this).find('h4').text();```
-
-The name, location and meeting times are combined into an object and added to the meetings array. The array is then returned.
-
+Once within this ```td``` section, three sections of HTML are removed. The bold meeting description, wheelchair access and additional information.
 ```javascript
-meetings[meetings.length] = {
-    'Name' : name,
-    'Location' : location,
-    'Times' : times
-};
- 
-return meetings;
+$(this).children().eq(0).find('div').remove().html();
+$(this).children().eq(0).find('b').remove().html();
+$(this).children().eq(0).find('span').remove().html();
+```
+*This information can be saved into separate variables before deleting with the same code without the ```.remove()``` keyword.*
+
+The remaining code is then saved into a variable
+```javascript
+var location = $(this).children().eq(0).text().split(/\n|,|\(|\)/).map(item => item.trim()).filter(Boolean);
 ```
 
-The details for each meeting can now be accessed by looping through the meetings array and using the key for ```['Name]```,```['Location']``` and ```['Times']```.
+The data is then split at each line break, comma and bracket, creating an array of separate items.
+```javascript
+.split(/\n|,|\(|\)/)
+``` 
+
+Whitespace (additional spaces) are then stripped out of the remaining text.
+```javascript
+.map(item => item.trim())
+``` 
+
+Finally any additional blank entries that are remaining in the array created by the ```.split()``` command are removed.
+```javascript
+.filter(Boolean)
+```
+
+## Creating a save string
+At the top of the .js file a new file is created with a single line of text containing comma separted headings.
+```javascript
+fs.writeFileSync('data/AA-data-07.csv', "Location_Name,Address_Line_1,State,Zipcode,Extended_Address\n");
+```
+
+The details that are required to be saved are then extracted from the array and combined into a comma separated string.
+The Location Name and the first line of the address are always the first two elements in the array. As all of the data originates from New York, this is entered manually (not manipulating the original data) as this is missing in some instances of the address.
+```javascript
+var saveString = location[0] + ',' + location[1] + ',' + 'NY,' + location[location.length - 1].replace(/\D+/g, '') + ',' + "\"" + location.join(',') + "\"";
+```
+
+Finally the zipcode is always the final item in the HTML, however it sometimes included the NY state code at the start. The NY code is removed with the following code.
+```javascript
+.replace(/\D+/g, '')
+```
+The ```\D``` represents all non digits. This solution was provided by [Molecular Man](https://stackoverflow.com/questions/9309278/javascript-regex-replace-all-characters-other-than-numbers)
+
+## Saving the information
+The final step was to save the information into the previously created file. In order to not overwrite the previous information, it must be *appended*.
+```javascript
+fs.appendFileSync('data/AA-data-07.csv', saveString + '\n');
+```
+The ```\n``` code at the end of the request starts a new line in the file for each entry.
