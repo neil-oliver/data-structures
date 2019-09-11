@@ -54,7 +54,7 @@ Within the resulting data there are three table data sections, the location deta
 The data from each of these sections is extracted using the following code (changing the index to access each section).
 The first of these sections contains all of the information we require for this task, plus some additional details. This section can be accessed through the following code:
 ```javascript
-$(this).children().eq(0).text()
+$(this).children().eq(0)
 ``` 
 
 Once within this ```td``` section, three sections of HTML are removed. The bold meeting description, wheelchair access and additional information.
@@ -92,7 +92,7 @@ fs.writeFileSync('data/AA-data-07.csv', "Location_Name,Address_Line_1,State,Zipc
 ```
 
 The details that are required to be saved are then extracted from the array and combined into a comma separated string.
-The Location Name and the first line of the address are always the first two elements in the array. As all of the data originates from New York, this is entered manually (not manipulating the original data) as this is missing in some instances of the address.
+The location name and the first line of the address are always the first two elements in the array. As all of the data originates from New York, this is entered manually (not manipulating the original data) as this is missing in some instances of the address.
 ```javascript
 var saveString = location[0] + ',' + location[1] + ',' + 'NY,' + location[location.length - 1].replace(/\D+/g, '') + ',' + "\"" + location.join(',') + "\"";
 ```
