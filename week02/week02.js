@@ -27,8 +27,12 @@ fs.readFile('/home/ec2-user/environment/week01/data/AA-data-07.txt', 'utf8', (er
             $(this).children().eq(0).find('span').remove().html();
             
             // Extract the location details. Split at a new line, deleting white space and blank lines
-            var location = $(this).children().eq(0).text().split(/\n|,|\(|\)/).map(item => item.trim()).filter(Boolean);
-    
+            var location = $(this).children().eq(0).text().split(/\n|,|\(|\)|-/).map(item => item.trim()).filter(Boolean);
+            
+            // Replace E in address with East
+            location[1] = location[1].replace(" E ", " East ");
+            location[1] = location[1].replace(" E. ", " East ");
+
             // Combine variables togther in a comma deliminated string
             var saveString = location[0] + ',' + location[1] + ',' + 'NY,' + location[location.length - 1].replace(/\D+/g, '') + ',' + "\"" + location.join(',') + "\"";
             
