@@ -67,7 +67,7 @@ $(this).children().eq(0).find('span').remove().html();
 
 The remaining code is then saved into a variable
 ```javascript
-var location = $(this).children().eq(0).text().split(/\n|,|\(|\)/).map(item => item.trim()).filter(Boolean);
+var location = $(this).children().eq(0).text().split(/\n|,|\(|\)|-/).map(item => item.trim()).filter(Boolean);
 ```
 
 The data is then split at each line break, comma and bracket, creating an array of separate items.
@@ -83,6 +83,13 @@ Whitespace (additional spaces) are then stripped out of the remaining text.
 Finally any additional blank entries that are remaining in the array created by the ```.split()``` command are removed.
 ```javascript
 .filter(Boolean)
+```
+
+## Address inconsistencies update
+Some address use the letter **E** or **E.** instead of **East** so they are replaced to keep consistency.
+```javascript
+location[1] = location[1].replace(" E ", " East ");
+location[1] = location[1].replace(" E. ", " East ");
 ```
 
 ## Creating a save string
