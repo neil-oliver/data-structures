@@ -127,6 +127,3 @@ function getGeocode(name, address){
         fs.writeFileSync('data/AA-data-07.json', JSON.stringify(meetings));
     }
 }
-
-
-

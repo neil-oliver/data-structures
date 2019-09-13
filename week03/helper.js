@@ -4,7 +4,7 @@ function makeCSV(jsonFile){
     var meetings = JSON.parse(jsonFile)
     
     // Wipe text file and add headings
-    fs.writeFileSync('data/AA-data-07.csv', "Location_Name,Address_Line_1,City,State,Zipcode,Extended_Address,Meeting_Name,Day,Start,End,Type\n");
+    fs.writeFileSync('data/AA-data-07.csv', "Location_Name,Address_Line_1,City,State,Zipcode,Extended_Address,Latitude,Longitude,Meeting_Name,Day,Start,End,Type\n");
     
     for (var locationName in meetings) {
         if (meetings.hasOwnProperty(locationName)) {
@@ -20,6 +20,8 @@ function makeCSV(jsonFile){
                         meetings[locationName]['address']['state'] + ',' +
                         meetings[locationName]['address']['zip'] + ',' + '"' +
                         meetings[locationName]['address']['friendly'] + '"' + ',' +
+                        meetings[locationName]['address']['geocode']['latitude'] + ',' +
+                        meetings[locationName]['address']['geocode']['longitude'] + ',' +
                         meetingName + ',' +
                         meetings[locationName]['meetings'][meetingName][i]['day'] + ',' +
                         meetings[locationName]['meetings'][meetingName][i]['start'] + ',' +
