@@ -1,15 +1,19 @@
 //  Neil Oliver
-//  Week 02 Data Structures Task
-//  Parse saved data save new file
+//  Week 03 Data Structures Task
+//  Add geographic info to parsed data
 
-// Dependencies
-const fs = require('fs')
+// dependencies
+var request = require('request'); // npm install request
+var async = require('async'); // npm install async
+var fs = require('fs');
+const dotenv = require('dotenv'); // npm install dotenv
 var cheerio = require('cheerio')
 
-var meetings = {};
+// TAMU api key
+dotenv.config();
+const apiKey = process.env.TAMU_KEY;
 
-// Wipe text file and add headings
-fs.writeFileSync('data/AA-data-07.csv', "Location_Name,Address_Line_1,State,Zipcode,Extended_Address\n");
+var meetings = {};
 
 // Read text file with saved HTML data
 fs.readFile('/home/ec2-user/environment/week01/data/AA-data-07.txt', 'utf8', (error, data) => {
@@ -26,6 +30,7 @@ fs.readFile('/home/ec2-user/environment/week01/data/AA-data-07.txt', 'utf8', (er
             meetingName = meetingName.split(' - ')
             meetingName = meetingName[0].toLowerCase()
             
+            //Extract if Wheelchair access is available
             var access = false
             if ($(this).children().eq(0).find('span').text().trim() == "Wheelchair access"){
                access = true 
@@ -42,13 +47,8 @@ fs.readFile('/home/ec2-user/environment/week01/data/AA-data-07.txt', 'utf8', (er
             // Replace E in address with East
             location[1] = location[1].replace(" E ", " East ");
             location[1] = location[1].replace(" E. ", " East ");
-
-            // Combine variables togther in a comma deliminated string
-            var saveString = location[0] + ',' + location[1] + ',' + 'NY,' + location[location.length - 1].replace(/\D+/g, '') + ',' + "\"" + location.join(',') + "\"";
             
-            // Save CSV into text file
-            fs.appendFileSync('data/AA-data-07.csv', saveString + '\n');
-            
+            //Create an address object
             var addressObj = {
                 line_1 : location[1],
                 city : "New York",
@@ -56,18 +56,20 @@ fs.readFile('/home/ec2-user/environment/week01/data/AA-data-07.txt', 'utf8', (er
                 zip : location[location.length - 1].replace(/\D+/g, ''),
                 friendly: location.join(','),
                 wheelchair_access: access,
-                meetings : {
-                    [meetingName] : []
-                }
             };
 
+            //If the meetings object does not contain this address, add it.
             if (!(meetings.hasOwnProperty(location[0]))){
-                meetings[location[0]] = addressObj;
+                meetings[location[0]] = {
+                    address : addressObj,
+                    'meetings':{}
+                };
             }
-            console.log(location[0])
-
+            
+            //Extract the meeting times into an array
             var meetingTimes = $(this).children().eq(1).text().split('\n').map(item => item.trim()).filter(Boolean)
-
+            
+            //For each meeting time, itterate through and extract the details into an object.
             for (let x = 0; x < meetingTimes.length; x++) { 
             
                 console.log(meetingTimes[x])
@@ -78,19 +80,53 @@ fs.readFile('/home/ec2-user/environment/week01/data/AA-data-07.txt', 'utf8', (er
                     end : times[6]+' '+times[7],
                     type : times[10]
                 }
-
+                
+                //If the meeting has already been created, append the meeting times, else add the meeting and times.
                 if (meetings[location[0]]['meetings'].hasOwnProperty(meetingName)) {
                     meetings[location[0]]['meetings'][meetingName].push(timesObj)
                 } else {
                     meetings[location[0]]['meetings'][meetingName] = [timesObj]
                 }
             };
-
-
-            fs.writeFileSync('data/AA-data-07.json', JSON.stringify(meetings));
-
+            
+            //Call the geocode function
+            getGeocode(location[0],addressObj)
         };
     });
 });
+
+function getGeocode(name, address){
+    //Check to see if the address already has the geocode before continue to save unneccesary API calls. 
+    if (!(address.hasOwnProperty('geocode'))){
+        //Set up the API request
+        var apiRequest = 'https://geoservices.tamu.edu/Services/Geocode/WebService/GeocoderWebServiceHttpNonParsed_V04_01.aspx?';
+        apiRequest += 'streetAddress=' + address.line_1.split(' ').join('%20');
+        apiRequest += '&city=New%20York&state=NY&apikey=' + apiKey;
+        apiRequest += '&format=json&version=4.01';
+        
+        request(apiRequest, function(err, resp, body) {
+            if (err) {throw err;}
+            else {
+                var tamuGeo = JSON.parse(body);
+                //Extract the latitude and longitude
+                var lat = tamuGeo['OutputGeocodes'][0]['OutputGeocode']['Latitude']
+                var lon = tamuGeo['OutputGeocodes'][0]['OutputGeocode']['Longitude']
+                
+                //Save a geocode object to the meetings object
+                meetings[name]['address']['geocode'] = {
+                    latitude : lat,
+                    longitude : lon
+                }
+                
+                //Save the meetings object to file
+                fs.writeFileSync('data/AA-data-07.json', JSON.stringify(meetings));
+            }
+        });
+    } else {
+        //Save the existing data to file
+        fs.writeFileSync('data/AA-data-07.json', JSON.stringify(meetings));
+    }
+}
+
 
 

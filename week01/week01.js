@@ -26,3 +26,6 @@ for (let i = 0; i < 10; i++) {
         else {console.log(error)}
     });
 };
+
+//first line is after bold until ,
+//zipcode directly before any additional formatting
