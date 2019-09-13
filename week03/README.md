@@ -1,4 +1,33 @@
 # Week 03
+## Data Structure
+```JSON
+"Location Name": {
+  "address": {
+    "line_1": "",
+    "city": "",
+    "state": "",
+    "zip": "",
+    "friendly": "",
+    "wheelchair_access": Bool,
+    "geocode": {
+      "latitude": "",
+      "longitude": ""
+    }
+  },
+  "meetings": {
+    "Meeting Name": [
+      {
+        "day": "",
+        "start": "",
+        "end": "",
+        "type": ""
+      }
+    ]
+  }
+}  
+```
+
+## Data Sample
 
 ```JSON
 {
