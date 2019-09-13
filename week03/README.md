@@ -99,7 +99,7 @@ The location, meetings and meeting times objects are not stored separately, inst
     "state": "",
     "zip": "",
     "friendly": "",
-    "wheelchair_access": Bool,
+    "wheelchair_access": false,
     "geocode": {
       "latitude": "",
       "longitude": ""
