@@ -3,7 +3,7 @@ Task instructions provided by [Aaron Hill](https://github.com/aaronxhill).
 
 Full instructions for this tasks can be found on the Parsons MSDV [Data Structures GitHub Page](https://github.com/visualizedata/data-structures/blob/master/weekly_assignment_03.md).
 
-**An updated and improved version of the code for this project is included in the [Week04 Code](https://github.com/neil-oliver/data-structures/blob/master/week04/week04.js). The code not only parses the information from all 10 files but also has improvments to many aspects of the code, including storing additional details and more in depth data cleaning.** 
+An **updated and improved version** of the code for this project is included in the [Week04 Code](https://github.com/neil-oliver/data-structures/blob/master/week04/week04.js). The code not only parses the information from all 10 files but also has improvments to many aspects of the code, including storing additional details and more in depth data cleaning. 
 
 Comments have been removed from code samples within the README file, but detailed comments are present in the javascript files.
 
@@ -223,4 +223,53 @@ Below is a small sample of the final ```JSON```. This shows the nested objects i
     }
   },
  ...
+```
+## Helper File / CSV Information Checking
+While the best data structure for the information and its intended use is ```JSON```, checking the completeness and standardisation of the information is much easier in tabular form via a ```CSV```.
+
+A [Helper File](https://github.com/neil-oliver/data-structures/blob/master/week03/helper.js) was created to transpose the saved [JSON](https://github.com/neil-oliver/data-structures/blob/master/week03/data/AA-data-07.json) file into a [CSV](https://github.com/neil-oliver/data-structures/blob/master/week03/data/AA-data-07.csv).
+
+It is important to note that information within the CSV is repeated for each individual meeting time so it is only being created for data validation purposes. 
+
+```javascript
+var fs = require('fs');
+
+function makeCSV(jsonFile){
+    var meetings = JSON.parse(jsonFile)
+    
+    fs.writeFileSync('data/AA-data-07.csv', "Location_Name,Address_Line_1,City,State,Zipcode,Extended_Address,Latitude,Longitude,Meeting_Name,Day,Start,End,Type\n");
+    
+    for (var locationName in meetings) {
+        if (meetings.hasOwnProperty(locationName)) {
+
+            for (var meetingName in meetings[locationName]['meetings']){
+
+                for (let i = 0; i < meetings[locationName]['meetings'][meetingName].length; i++) { 
+                                    
+                    var saveString = 
+                        locationName + ',' +
+                        meetings[locationName]['address']['line_1'] + ',' +
+                        meetings[locationName]['address']['city'] + ',' +
+                        meetings[locationName]['address']['state'] + ',' +
+                        meetings[locationName]['address']['zip'] + ',' + '"' +
+                        meetings[locationName]['address']['friendly'] + '"' + ',' +
+                        meetings[locationName]['address']['geocode']['latitude'] + ',' +
+                        meetings[locationName]['address']['geocode']['longitude'] + ',' +
+                        meetingName + ',' +
+                        meetings[locationName]['meetings'][meetingName][i]['day'] + ',' +
+                        meetings[locationName]['meetings'][meetingName][i]['start'] + ',' +
+                        meetings[locationName]['meetings'][meetingName][i]['end'] + ',' +
+                        meetings[locationName]['meetings'][meetingName][i]['type']
+                    
+                    fs.appendFileSync('data/AA-data-07.csv', saveString + '\n');
+                }
+            }
+        }
+    }
+}
+
+fs.readFile('data/AA-data-07.json', 'utf8', (error, data) => {
+    if (error) throw error;
+    makeCSV(data)
+});
 ```
