@@ -7,6 +7,33 @@ Full instructions for this tasks can be found on the Parsons MSDV [Data Structur
 This is a continuation from [Task 3](https://github.com/neil-oliver/data-structures/tree/master/week03) and part of the [Weekly Data Structures Tasks](https://github.com/neil-oliver/data-structures)
 
 ## V.1 Schema for Relational Database
+Initial proposal for the database schema based on the previously saved json file structure.
+```JSON
+"Location Name": {
+  "address": {
+    "line_1": "",
+    "city": "",
+    "state": "",
+    "zip": "",
+    "friendly": "",
+    "wheelchair_access": false,
+    "geocode": {
+      "latitude": "",
+      "longitude": ""
+    }
+  },
+  "meetings": {
+    "Meeting Name": [
+      {
+        "day": "",
+        "start": "",
+        "end": "",
+        "type": ""
+      }
+    ]
+  }
+}  
+```
 ![](https://github.com/neil-oliver/data-structures/blob/master/week04/Relational_Schema.png)
 
 ## V.2 Schema for Relational Database
