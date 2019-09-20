@@ -15,43 +15,48 @@ client.connect();
 
 var query = "";
 
-// Sample SQL statement to delete a table: 
-// query += "DROP TABLE if exists types cascade;";
-// query += "DROP TABLE if exists events cascade;";
-// query += "DROP TABLE if exists groups cascade;";
-// query += "DROP TABLE if exists locations cascade;";
+var drop = false
 
+if (drop == true) {
+    
+    // SQL statement to delete a table: 
+    query += "DROP TABLE if exists types cascade;";
+    query += "DROP TABLE if exists events cascade;";
+    query += "DROP TABLE if exists groups cascade;";
+    query += "DROP TABLE if exists locations cascade;";
+    
+} else {
+    
+    // SQL statement to create a table: 
+    query += "CREATE TABLE locations (Location_ID serial primary key,\
+                                        Location_Name varchar(100),\
+                                        Address_Line_1 varchar(100),\
+                                        City varchar(100),\
+                                        State varchar(2),\
+                                        Zipcode varchar(5),\
+                                        Accessible BOOL,\
+                                        Extended_Address varchar(200),\
+                                        lat double precision,\
+                                        long double precision,\
+                                        Zone smallint);";
+    
+    query += "CREATE TABLE groups (Group_ID serial primary key,\
+                                    Location_ID int references locations(Location_ID),\
+                                    Group_Name varchar(100),\
+                                    Details varchar(100));";
+    
+    query += "CREATE TABLE types (Type_ID serial primary key,\
+                                    Description varchar(100));";
+                                        
+    query += "CREATE TABLE events (Event_ID varchar(5) primary key,\
+                                    Group_ID int references groups(Group_ID),\
+                                    Day varchar(100),\
+                                    Start_at time,\
+                                    End_at time,\
+                                    Type_ID int references types(Type_ID),\
+                                    Details varchar(100));";
+}
 
-// SQL statement to create a table: 
-query += "CREATE TABLE locations (Location_ID serial primary key,\
-                                    Location_Name varchar(100),\
-                                    Address_Line_1 varchar(100),\
-                                    City varchar(100),\
-                                    State varchar(100),\
-                                    Zipcode smallint,\
-                                    Accessible BOOL,\
-                                    Extended_Address varchar(200),\
-                                    lat double precision,\
-                                    long double precision,\
-                                    Zone smallint);";
-
-query += "CREATE TABLE groups (Group_ID serial primary key,\
-                                Location_ID int references locations(Location_ID),\
-                                Address_Line_1 varchar(100),\
-                                Group_Name varchar(100),\
-                                Details varchar(100));";
-
-query += "CREATE TABLE types (Type_ID serial primary key,\
-                                Description varchar(100));";
-                                    
-query += "CREATE TABLE events (Event_ID serial primary key,\
-                                Group_ID int references groups(Group_ID),\
-                                Day varchar(100),\
-                                Start_at time,\
-                                End_at time,\
-                                Type_ID int references types(Type_ID),\
-                                Details varchar(100));";
- 
 // Check Schema                               
 // query = 'SELECT * FROM INFORMATION_SCHEMA.COLUMNS';
 
