@@ -13,12 +13,51 @@ db_credentials.port = 5432;
 const client = new Client(db_credentials);
 client.connect();
 
-// Sample SQL statement to create a table: 
-var thisQuery = "CREATE TABLE aalocations (address varchar(100), lat double precision, long double precision);";
-// Sample SQL statement to delete a table: 
-// var thisQuery = "DROP TABLE aalocations;"; 
+var query = "";
 
-client.query(thisQuery, (err, res) => {
+// Sample SQL statement to delete a table: 
+// query += "DROP TABLE if exists types cascade;";
+// query += "DROP TABLE if exists events cascade;";
+// query += "DROP TABLE if exists groups cascade;";
+// query += "DROP TABLE if exists locations cascade;";
+
+
+// SQL statement to create a table: 
+query += "CREATE TABLE locations (Location_ID serial primary key,\
+                                    Location_Name varchar(100),\
+                                    Address_Line_1 varchar(100),\
+                                    City varchar(100),\
+                                    State varchar(100),\
+                                    Zipcode smallint,\
+                                    Accessible BOOL,\
+                                    Extended_Address varchar(200),\
+                                    lat double precision,\
+                                    long double precision,\
+                                    Zone smallint);";
+
+query += "CREATE TABLE groups (Group_ID serial primary key,\
+                                Location_ID int references locations(Location_ID),\
+                                Address_Line_1 varchar(100),\
+                                Group_Name varchar(100),\
+                                Details varchar(100));";
+
+query += "CREATE TABLE types (Type_ID serial primary key,\
+                                Description varchar(100));";
+                                    
+query += "CREATE TABLE events (Event_ID serial primary key,\
+                                Group_ID int references groups(Group_ID),\
+                                Day varchar(100),\
+                                Start_at time,\
+                                End_at time,\
+                                Type_ID int references types(Type_ID),\
+                                Details varchar(100));";
+ 
+// Check Schema                               
+// query = 'SELECT * FROM INFORMATION_SCHEMA.COLUMNS';
+
+//run query
+client.query(query, (err, res) => {
     console.log(err, res);
     client.end();
 });
+
