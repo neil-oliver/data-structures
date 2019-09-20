@@ -123,6 +123,20 @@ query = 'SELECT * FROM INFORMATION_SCHEMA.COLUMNS';
 
 ## Saving the Previously Saved Information
 
+Once the database tables have been created, the information from the previously saved json file is saved into the database, one record at a time.
+
+Due to the structure of the json file, with a location containing groups information and a group containing event information; a nested loop is used to parse each entry and a time.
+
+The process of this loop is as follows:
+1. For each location in the json, save the address data to the location table.
+2. Take the data for the first group within the location object, save the group data to the group table.
+3. For each event in the group, save the event data to the event table. 
+4. Repeat steps 2 & 3 for any additions groups within the location.
+5. When all groups and events for the location have been added, proceed to the next location.
+
+Each of the three stages are similar code, with the differences being the building of the different query strings and the output statements.  
+**Note for improvement: While the nested loop approach works for such a small number of nested objects, a recursive function may have been a more efficient way of coding the solution.**
+
 ```javascript
 const { Client } = require('pg');
 const async = require('async');
@@ -221,6 +235,15 @@ fs.readFile('data/AA-complete-data.json', 'utf8', (error, data) => {
 });
 ```
 ## Selecting and Checking Information from the Database
+
+The first method of checking that the console and correct information has been saved to the database is through the print statements in the ```week04b.js ``` file.
+The print statements output the newly created ID numbers for the events, with the final print out showing a total of **1206** events being created.  
+This is the same number of rows that are shown in the CSV helper file that is generated from the same json file.
+
+The ```week04c.js ``` file contains another database query. This query loops through each of the tables and gets all of the fields (using the ```* ``` selector.
+The information is output the the console and also saved back into an new json file so the information can more easily be validated. 
+
+
 ```javascript
   
 const { Client } = require('pg');
