@@ -58,8 +58,8 @@ const client = new Client(db_credentials);
 client.connect();
 ```
 
-### Creating the Database Structure
-## Building a create table query string
+## Creating the Database Structure
+### Building a create table query string
 To avoid calling the database multiple times with different requests, one long request string is created and ther requests are concatinated.
 Each of the field names and data types are the same as listed database schema V.2 above.
 All three tables include dynamically generated primary keys with the ```Groups``` and ```Events``` tables also including foreign keys to create realtionships between the tables.  
@@ -92,7 +92,7 @@ query += "CREATE TABLE events (Event_ID serial primary key,\
                                 Type_ID varchar(20),\
                                 Details varchar(100));";
 ```
-## Deleting a table
+### Deleting a table
 If updates are made to any of the saved data and the database needs to be reset, each of the tables can be 'dropped'. This is done with the same method as the creation of the tables, building a single SQL query string. This was done in a small if statement to make it easy to switch between building the tables of dropping the tables.
 
 ```javascript
@@ -107,7 +107,7 @@ if (drop == true) {
 }
 ```
 
-## Run the Query String
+### Run the Query String
 Regardless of if the drop of create query string has been built, either can be passed to the code below for execution.
 ```javascript
 client.query(query, (err, res) => {
@@ -115,8 +115,9 @@ client.query(query, (err, res) => {
     client.end();
 });
 ```
-## testing the Dastabase Schema
+### Testing the Dastabase Schema
 Once the tables have been created, they can be quickly tested using the query string below. This overrides either of the other two query strings that had been created earlier in the code.
+
 ## Saving the Previously Saved Information
 ```javascript
 query = 'SELECT * FROM INFORMATION_SCHEMA.COLUMNS';
