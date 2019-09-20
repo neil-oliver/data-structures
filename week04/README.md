@@ -14,6 +14,7 @@ The schema was simplified on the reflection that the additional ```Types``` tabl
 ![](https://github.com/neil-oliver/data-structures/blob/master/week04/Relational_Schema_2.png)
 
 ## Setup and Connect to the Database
+The database connection code was adapted from the [sample code](https://github.com/visualizedata/data-structures/blob/master/weekly_assignment_04.md), with sensitive details contained within a .env file.
 ```javascript
 const { Client } = require('pg');
 const dotenv = require('dotenv').config();
@@ -33,7 +34,7 @@ client.connect();
 ## Creating the Database Structure
 To avoid calling the database multiple times with different requests, one long request string is created and ther requests are concatinated.
 Each of the field names and data types are the same as listed database schema V.2 above.
-All three tables include dynamically generated primary keys with the ```Groups``` and ```Events``` tables also including foreign keys to create realtionships between the tables.
+All three tables include dynamically generated primary keys with the ```Groups``` and ```Events``` tables also including foreign keys to create realtionships between the tables.  
 **Note for improvement: The start and end fields could be time datatype but would not currently accept current JSON value. This should be updated for better searching through the GUI.**
 ```javascript
 var query = "";
