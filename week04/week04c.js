@@ -16,15 +16,20 @@ db_credentials.port = 5432;
 const client = new Client(db_credentials);
 client.connect();
 
+//array of the names of the three tables to iterate through
 var tables = ['locations','groups','events'];
 
+//Asynchronous loop through the table names
 async.eachSeries(tables, function(table, callback) {
     const client = new Client(db_credentials);
     client.connect();
+    //Select everything from the current table
     var thisQuery = "SELECT * FROM " + table + ";";
     client.query(thisQuery, (err, res) => {
+        //print out the rows element of response
         console.log(err, res.rows);
         client.end();
+        //append the information to a json file for error checking
         fs.appendFileSync('data/dbOutput.json', JSON.stringify(res.rows));
     });
     setTimeout(callback, 1000); 

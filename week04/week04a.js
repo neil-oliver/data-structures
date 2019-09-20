@@ -13,10 +13,12 @@ db_credentials.port = 5432;
 const client = new Client(db_credentials);
 client.connect();
 
+//To avoid calling the database multiple times with different requests, one long request string will be concatinated
 var query = "";
 
 var drop = false;
 
+//This file will both add new tables and drop (delete) them. Changing the flag above will switch options.
 if (drop == true) {
     
     // SQL statement to delete a table: 
@@ -39,6 +41,7 @@ if (drop == true) {
                                         long double precision,\
                                         Zone smallint);";
     
+    //The two tables below include both ynamically generated primary keys and foreign keys to create realtionships between the tables.
     query += "CREATE TABLE groups (Group_ID serial primary key,\
                                     Location_ID int references locations(Location_ID),\
                                     Group_Name varchar(100),\
@@ -55,10 +58,10 @@ if (drop == true) {
                                     Details varchar(100));";
 }
 
-// Check Schema                               
+// Uncomment this to check Schema                               
 // query = 'SELECT * FROM INFORMATION_SCHEMA.COLUMNS';
 
-//run query
+//run the query string from above
 client.query(query, (err, res) => {
     console.log(err, res);
     client.end();
