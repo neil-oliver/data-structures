@@ -36,35 +36,51 @@ fs.readFile('data/AA-complete-data.json', 'utf8', (error, data) => {
             if (error) {
                 console.log(err, locationQuery);
             } else {
+                console.log('Location ID: ' + res.rows[0].location_id);
                 client.end();
-                console.log(res.rows[0].location_id);
-    
-                async.forEachOf(meetings[location], function(groupObj,group, callback) {
+
+                async.forEachOf(meetings[location]['meetings'], function(groupObj,group, callback) {
                     const client = new Client(db_credentials);
                     client.connect();
-                        var meetingQuery = escape("INSERT INTO groups VALUES (DEFAULT, %L) RETURNING Group_ID;", meetings[location]['meetings'][group]);
+                        var meetingQuery = escape("INSERT INTO groups VALUES (DEFAULT, %s, %L, %L) RETURNING Group_ID;", res.rows[0].location_id, group, "");
 
                     client.query(meetingQuery, (err, res) => {
                         if (error) {
                             console.log(err, meetingQuery);
                         } else {
-                            console.log(res.rows[0].group_id);
+                            console.log('Group ID: ' + res.rows[0].group_id);
+                            client.end();
+                            
+                            async.forEachOf(meetings[location]['meetings'][group], function(eventObj,event, callback) {
+                                const client = new Client(db_credentials);
+                                client.connect();
+                                    var eventQuery = escape("INSERT INTO events VALUES (DEFAULT, %s, %L, %L, %L, %L, %L) RETURNING Event_ID;",
+                                    res.rows[0].group_id,
+                                    meetings[location]['meetings'][group][event]['day'],
+                                    meetings[location]['meetings'][group][event]['start'],
+                                    meetings[location]['meetings'][group][event]['end'],
+                                    meetings[location]['meetings'][group][event]['type'],
+                                    "");
+
+                                client.query(eventQuery, (err, res) => {
+                                    if (error) {
+                                        console.log(err, eventQuery);
+                                    } else {
+                                        console.log('Event ID: ' + res.rows[0].event_id);
+                                        client.end();
+                                    }
+                                });
+                            
+                            setTimeout(callback, 2000); 
+                            });
                         }
-                        client.end();
                     });
                 
                 setTimeout(callback, 2000); 
                 });
             }
-            client.end();
         });
     
     setTimeout(callback, 2000); 
     }); 
 });
-
-        
-// meetings[location]['meetings'][group][i]['day'] + ',' +
-// meetings[location]['meetings'][group][i]['start'] + ',' +
-// meetings[location]['meetings'][group][i]['end'] + ',' +
-// meetings[location]['meetings'][group][i]['type']

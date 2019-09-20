@@ -15,12 +15,11 @@ client.connect();
 
 var query = "";
 
-var drop = false
+var drop = false;
 
 if (drop == true) {
     
     // SQL statement to delete a table: 
-    query += "DROP TABLE if exists types cascade;";
     query += "DROP TABLE if exists events cascade;";
     query += "DROP TABLE if exists groups cascade;";
     query += "DROP TABLE if exists locations cascade;";
@@ -45,15 +44,14 @@ if (drop == true) {
                                     Group_Name varchar(100),\
                                     Details varchar(100));";
     
-    query += "CREATE TABLE types (Type_ID serial primary key,\
-                                    Description varchar(100));";
-                                        
-    query += "CREATE TABLE events (Event_ID varchar(5) primary key,\
+
+    // * Note for improvement: start and end could be time datatype but will not accept current JSON value                         
+    query += "CREATE TABLE events (Event_ID serial primary key,\
                                     Group_ID int references groups(Group_ID),\
                                     Day varchar(100),\
-                                    Start_at time,\
-                                    End_at time,\
-                                    Type_ID int references types(Type_ID),\
+                                    Start_at varchar(10),\
+                                    End_at varchar(10),\
+                                    Type_ID varchar(20),\
                                     Details varchar(100));";
 }
 
