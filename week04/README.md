@@ -237,11 +237,16 @@ fs.readFile('data/AA-complete-data.json', 'utf8', (error, data) => {
 ## Selecting and Checking Information from the Database
 
 The first method of checking that the console and correct information has been saved to the database is through the print statements in the ```week04b.js ``` file.
-The print statements output the newly created ID numbers for the events, with the final print out showing a total of **1206** events being created.  
-This is the same number of rows that are shown in the CSV helper file that is generated from the same json file.
+The print statements output the newly created ID numbers for the events, with the final print out showing Event_ID number **1206** being created. 
+![](https://github.com/neil-oliver/data-structures/blob/master/week04/Console_Output.png)  
 
+The [CSV helper file](https://github.com/neil-oliver/data-structures/blob/master/week04/data/AA-complete-data.csv) that is generated from the same json file shows a total of **1208** rows, however this is due to the addition of a header row and the Event_ID values starting at a zero index. 
+
+![](https://github.com/neil-oliver/data-structures/blob/master/week04/CSV_Data_Count_1.png)
+![](https://github.com/neil-oliver/data-structures/blob/master/week04/CSV_Data_Count_2.png)  
+  
 The ```week04c.js ``` file contains another database query. This query loops through each of the tables and gets all of the fields (using the ```* ``` selector.
-The information is output the the console and also saved back into an new json file so the information can more easily be validated. 
+The information is output the the console and also saved back into a [new json file](https://github.com/neil-oliver/data-structures/blob/master/week04/data/dbOutput.json) so the information can more easily be validated.   
 
 
 ```javascript
