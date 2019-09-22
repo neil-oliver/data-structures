@@ -347,7 +347,7 @@ The first method of checking that the console and correct information has been s
 The print statements output the newly created ID numbers for the events, with the final print out showing Event_ID number **1206** being created. 
 ![](https://github.com/neil-oliver/data-structures/blob/master/week04/Console_Output.png)  
 
-The [CSV helper file](https://github.com/neil-oliver/data-structures/blob/master/week04/data/AA-complete-data.csv) that is generated from the same json file shows a total of **1207** rows, however this is due to the addition of a header row. 
+The [CSV helper file](https://github.com/neil-oliver/data-structures/blob/master/week04/data/AA-complete-data.csv) that is generated from the same json file shows a total of **1207** rows, however this is due to the addition of a header row. *Note that the 1208 lines is in reference to a blank line in the CSV file containing no data*
 
 ![](https://github.com/neil-oliver/data-structures/blob/master/week04/CSV_Data_Count_1.png)
 ![](https://github.com/neil-oliver/data-structures/blob/master/week04/CSV_Data_Count_2.png)  
