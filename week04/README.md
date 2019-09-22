@@ -6,6 +6,111 @@ Full instructions for this tasks can be found on the Parsons MSDV [Data Structur
 
 This is a continuation from [Task 3](https://github.com/neil-oliver/data-structures/tree/master/week03) and part of the [Weekly Data Structures Tasks](https://github.com/neil-oliver/data-structures)
 
+## Update from Week 03
+### Parsing All 10 Zones
+The code from [Week 03](https://github.com/neil-oliver/data-structures/tree/master/week03) was updated to now parse and save all 10 files. The process of iterating through all 10 files was very similar to the method used in the [Week 01](https://github.com/neil-oliver/data-structures/tree/master/week01)task.
+
+```javascript
+for (let i = 0; i < 10; i++) {
+    
+    console.log("processing file No." + (i+1))
+    
+    //create a number for use in the url with a leading zero
+    let num = 0;
+    
+    //If the iterator is below 9 
+    if (i < 9) {
+        num = '0' + (i+1)
+    } else {
+        num = (i+1)
+    };
+    
+    // Read text file with saved HTML data
+    fs.readFile('/home/ec2-user/environment/week01/data/AA-data-' + num + '.txt', 'utf8', (error, data) => {
+        if (error) throw error;
+              
+        // Load the file data into the cheerio parser
+        const $ = cheerio.load(data);
+        ...
+     });
+```
+The parsing of the data is the same as described in the Week 03 code. 
+
+### Cleaning the Data
+#### Cleaning the Group Name
+Many of the Group names were repeated in capitals after a dash. The Group name was split, turned to lower case and then the first letter of each line is capitalized using code provided by [Greg Dean](https://stackoverflow.com/questions/196972/convert-string-to-title-case-with-javascript/196991#196991).
+```javascript
+meetingName = meetingName.split(' - ')
+meetingName = meetingName[0].toLowerCase()
+meetingName = toTitleCase(meetingName)
+
+// Title case function provided by Greg Dean
+function toTitleCase (str) {
+    return str.replace(
+        /\w\S*/g,
+        function(txt) {
+            return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();
+        }
+    );
+}
+```
+
+#### Removing inconsistencies in Address_Line_1
+A wide range of abbreviations are used in the street address so these are all replaced to the full word to ensure consistency. 
+```javascript
+  location[0] = location[0].replace(" E ", " East ");
+  location[0] = location[0].replace(" E. ", " East ");
+  location[0] = location[0].replace(" W ", " West ");
+  location[0] = location[0].replace(" W. ", " West ");
+  location[0] = location[0].replace(" St ", " Street ");
+  location[0] = location[0].replace(" Av ", " Avenue ");
+  location[0] = location[0].replace(" Av. ", " Avenue ");
+```
+
+Some addresses (incorrectly) used a comma in the address line. This meant that the address was split at an earlier stage of the parsing. To rectify this, the address line is evaluated to see if it only contains a number and then joins the next column if neccessary.
+
+```javascript
+ if ((location[0].replace(/\D+/g, '').length == 0) || (location[0].replace(/\d/g,'').length == 0)){
+     location[0] = location[0]+" "+location[1]
+     location.splice(1,1)
+ }
+```
+
+#### Including additional Details
+For easier checking of the data, both the zone of the location and the TAMU match score were included in the results. 
+
+```javascript
+var access = false
+if ($(this).children().eq(0).find('span').text().trim() == "Wheelchair access"){
+   access = true 
+}
+
+...
+
+var addressObj = {
+    line_1 : location[0],
+    city : "New York",
+    state : "NY",
+    zip : zipcode,
+    friendly: location.join(','),
+    wheelchair_access: access,
+    zone : num
+};
+
+...
+
+var matchScore = tamuGeo['OutputGeocodes'][0]['OutputGeocode']['MatchScore']
+
+meetings[name]['address']['coords'] = {
+    latitude : lat,
+    longitude : lon,
+    score : matchScore
+}       
+```
+The resulting saved data was the complete dataset with only 3 results with a TAMU match score of under 95%.
+**Note for improvement: The code was cleaned to a good level, with the only remaining issues being a very small amount of missing information. This could be rectified in some cases using the TAMU response data to replace insistent data or fill in missing gaps such as zip codes.**
+
+# Week04
 ## V.1 Schema for Relational Database
 Initial proposal for the database schema based on the previously saved json file structure, with a few additions such as the ability to save additional details for the groups and events.
 ![](https://github.com/neil-oliver/data-structures/blob/master/week04/Relational_Schema.png)
