@@ -8,7 +8,8 @@ This is a continuation from [Task 3](https://github.com/neil-oliver/data-structu
 
 ## Update from Week 03
 ### Parsing All 10 Zones
-The code from [Week 03](https://github.com/neil-oliver/data-structures/tree/master/week03) was updated to now parse and save all 10 files. The process of iterating through all 10 files was very similar to the method used in the [Week 01](https://github.com/neil-oliver/data-structures/tree/master/week01) task.
+The code from [Week 03](https://github.com/neil-oliver/data-structures/tree/master/week03) was updated to now parse and save all 10 files. The process of iterating through all 10 files was very similar to the method used in the [Week 01](https://github.com/neil-oliver/data-structures/tree/master/week01) task. The parsing of the data is the same as described in the [Week 03 code](https://github.com/neil-oliver/data-structures/blob/master/week03/week03.js). 
+
 
 ```javascript
 for (let i = 0; i < 10; i++) {
@@ -34,7 +35,6 @@ for (let i = 0; i < 10; i++) {
         ...
      });
 ```
-The parsing of the data is the same as described in the Week 03 code. 
 
 ### Cleaning the Data
 #### Cleaning the Group Name
