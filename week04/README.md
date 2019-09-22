@@ -107,7 +107,7 @@ meetings[name]['address']['coords'] = {
     score : matchScore
 }       
 ```
-The resulting saved data was the complete dataset with only 3 results with a TAMU match score of under 95%.
+The resulting saved data was the complete dataset with only 3 results with a TAMU match score of under 95%.  
 **Note for improvement: The code was cleaned to a good level, with the only remaining issues being a very small amount of missing information. This could be rectified in some cases using the TAMU response data to replace insistent data or fill in missing gaps such as zip codes.**
 
 # Week04
