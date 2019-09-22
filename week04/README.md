@@ -42,6 +42,8 @@ The schema was simplified on the reflection that the additional ```Types``` tabl
 
 ## Setup and Connect to the Database
 The database connection code was adapted from the [sample code](https://github.com/visualizedata/data-structures/blob/master/weekly_assignment_04.md), with sensitive details contained within a .env file.
+A new npm package is used called [pg](https://www.npmjs.com/package/pg).
+
 ```javascript
 const { Client } = require('pg');
 const dotenv = require('dotenv').config();
