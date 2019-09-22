@@ -351,7 +351,8 @@ The [CSV helper file](https://github.com/neil-oliver/data-structures/blob/master
 
 ![](https://github.com/neil-oliver/data-structures/blob/master/week04/CSV_Data_Count_1.png)
 ![](https://github.com/neil-oliver/data-structures/blob/master/week04/CSV_Data_Count_2.png)  
-  
+
+### Database Select and Saving Database Output
 The ```week04c.js ``` file contains another database query. This query loops through each of the tables and gets all of the fields (using the ```* ``` selector.
 The information is output the the console and also saved back into a [new json file](https://github.com/neil-oliver/data-structures/blob/master/week04/data/dbOutput.json) so the information can more easily be validated.   
 
