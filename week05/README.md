@@ -25,11 +25,11 @@ Based on the initial research the initial NoSQL database design is:
 Details such as links to social media, comments and different levels of access are not required. If additional links are required they can be included in the HTML of the content field. 
 
 ## Partition Keys and Sort Keys
-Due to cost limitations, no additional indexes will be placed on the NoSQL DynamoDB database. As the progress blog is quite simplistic, this will not be an issue however consideration does need to be paid to the choice of the the partition key and the sort key.
-
+Due to cost limitations, no additional indexes will be placed on the NoSQL DynamoDB database. As the progress blog is quite simplistic, this will not be an issue however consideration does need to be paid to the choice of the the partition key and the sort key. The clearest explanation of the differences between the two keys and how to select them came from a [stack overflow post](https://stackoverflow.com/questions/56166332/what-is-the-difference-between-partition-key-and-sort-key-in-amazon-dynamodb) by wzdv.  
+![](https://github.com/neil-oliver/data-structures/blob/master/week05/images/partition%26sort_keys.png)
 
 ### AWS Dynamo Query Expressions
-The [AWS Documentation](https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/Query.html#FilteringResults) gives some very important information about the different posibilities between querying the partition key and the sort key. 
+In addition to the infomation avove. The [AWS Documentation](https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/Query.html#FilteringResults) gives some very important information about the different posibilities between querying the partition key and the sort key. 
   
 **You must specify the partition key name and value as an equality condition.**  
 *You can optionally provide a second condition for the sort key (if present). The sort key condition must use one of the following comparison operators:*  
