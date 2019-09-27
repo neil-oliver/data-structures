@@ -1,44 +1,128 @@
-// Starter Code
+// Express Setup
+var express = require('express');
+var app = express();
+var bodyParser = require('body-parser');
+var urlencodedParser = bodyParser.urlencoded({ extended: true });
 
-var blogEntries = [];
+// AWS Setup
+var AWS = require('aws-sdk');
+AWS.config = new AWS.Config();
+AWS.config.region = "us-east-2";
+var dynamodb = new AWS.DynamoDB();
 
+//constructor class for a blog post entry
 class BlogEntry {
-  constructor(primaryKey, date, entry, happy, iate) {
-    this.pk = {};
-    this.pk.N = primaryKey.toString();
-    this.date = {}; 
-    this.date.S = new Date(date).toDateString();
-    this.entry = {};
-    this.entry.S = entry;
-    this.happy = {};
-    this.happy.BOOL = happy; 
-    if (iate != null) {
-      this.iate = {};
-      this.iate.SS = iate; 
+  constructor(category, created, title, author, content, published, tags, images, emotion, activity, food) {
+    this.category = {}; // Partition Key
+    this.category.S = category;
+    this.created = {}; // Sort Key
+    this.created.S = created;
+    this.updated = {};
+    this.updated.S = Date.now().toString();
+    this.title = {};
+    this.title.S = title;
+    this.author = {};
+    this.author.S = author;
+    this.content = {};
+    this.content.S = content;
+    this.published = {};
+    if (published == 'on'){
+      this.published.BOOL = true;
+    } else {
+      this.published.BOOL = false;
     }
-    this.month = {};
-    this.month.N = new Date(date).getMonth().toString();
+    if (tags != "") {
+      this.tags = {};
+      this.tags.SS = '[' + tags + ']';
+    }
+    if (images != "") {
+      this.images = {};
+      this.images.SS = '[' + images + ']';
+    }
+    if (emotion != "") {
+      this.emotion = {};
+      this.emotion.S = emotion;
+    }
+    if (activity != "") {
+      this.activity = {};
+      this.activity.S = activity;
+    }
+    if (food != "") {
+      this.food = {};
+      this.food.SS = '[' + food + ']'; 
+    }
   }
 }
 
-blogEntries.push(new BlogEntry(0, 'August 28 2019', "Yay, first day of class!", true, ["Cheez-Its", "M&Ms"]));
-blogEntries.push(new BlogEntry(1, 'October 31, 2015', "I piloted my first solo flight!", true, ["pancakes"]));
-blogEntries.push(new BlogEntry(2, 8675309, "867-5309?", false));
-blogEntries.push(new BlogEntry(3, 'September 25, 2019', "I taught my favorite students.", true, ["peas", "carrots"]));
+////////////////////////////////////////////////////////////////////////////////
+// use node to create a webpage
+app.get('/', function (req, res) {
+  var html='<!DOCTYPE html>\
+<html>\
+    <head>\
+        <title>Progress Blog Admin Page</title>\
+        <style>\
+            input, textarea {width : 50%;}\
+        </style>\
+    </head>\
+    <body>\
+        <form action="/" method="POST">\
+            Author<br>\
+            <input type="text" value="Admin" name="author"><br>\
+            Title<br>\
+            <input type="text" name="title" placeholder="required"><br>\
+            Category<br>\
+            <input type="text" name="category" placeholder="Required"><br>\
+            Content<br>\
+            <textarea name="content" rows="10"></textarea><br>\
+            Images<br>\
+            <input type="text" name="images" placeholder="Optional"><br>\
+            Tags<br>\
+            <input type="text" name="tags" placeholder="Optional"><br>\
+            How are you feeling?<br>\
+            <input type="text" name="emotion" placeholder="Optional"><br>\
+            What are you doing?<br>\
+            <input type="text" name="activity" placeholder="Optional"><br>\
+            What are you eating?<br>\
+            <input type="text" name="food" placeholder="Optional"><br>\
+            Publish &nbsp;\
+            <input type="checkbox" name="published"><br>\
+            <input type="submit">\
+        </form>\
+    </body>\
+</html>';
 
-console.log(blogEntries);
-
-var AWS = require('aws-sdk');
-AWS.config = new AWS.Config();
-AWS.config.region = "us-east-1";
-
-var dynamodb = new AWS.DynamoDB();
-
-var params = {};
-params.Item = blogEntries[0]; 
-params.TableName = "processblog";
-
-dynamodb.putItem(params, function (err, data) {
-  if (err) console.log(err, err.stack); // an error occurred
-  else     console.log(data);           // successful response
+  res.send(html); 
 });
+
+//listen for information being sent from the browser (request)
+app.listen(8080, function () {
+  console.log('Example app listening on port 8080!');
+});
+
+app.post('/', urlencodedParser, async function (req, res){
+  
+  // construct the blog post using the data
+  // reminder: constructor(category, created, title, author, content, published, tags, images, emotion, activity, food) 
+  var post = new BlogEntry(req.body.category, Date.now().toString(), req.body.title, req.body.author, req.body.content, req.body.published, req.body.tags, req.body.images, req.body.emotion, req.body.activity, req.body.food);
+  
+  // set up putItem for DynamoDB
+  var params = {};
+  params.Item = post; 
+  params.TableName = "process-blog";
+  var reply='';
+  
+  // attempt to save the information and display a message on success or error
+  dynamodb.putItem(params, function (err, data) {
+    
+    if (err != null){
+      console.log(err, err.stack); // an error occurred
+      reply += "There was a problem saving your blog post.";
+    }else {
+      console.log('success!');// successful response
+    reply += "Your blog post '" + req.body.title + "' has been successfully stored";
+    }
+    
+    res.send(reply);
+  });
+ });
