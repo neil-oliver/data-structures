@@ -20,7 +20,7 @@ Based on the initial research the initial NoSQL database design is:
 **Created** : Javascript Date Format  
 **Updated** : Javascript Date Format  
 **Content** : String *(HTML)*  
-**Category** : [String]  
+**Category** : String  
 **Tags** : [String]  
 **Images** : [String] *(Hyperlinks)*  
 **Publish** : Bool  
