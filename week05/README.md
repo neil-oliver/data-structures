@@ -2,12 +2,12 @@
 ## Research
 Three popular blog interfaces were investigated to see common features that may be useful to include in the design of the progress blog. 
 ### Wordpress
-![](https://github.com/neil-oliver/data-structures/blob/master/Week05/imageswordpress-admin-dashboard.png)
-![](https://github.com/neil-oliver/data-structures/blob/master/Week05/images/wordpress-admin-blogpost.jpg)
+![](https://github.com/neil-oliver/data-structures/blob/master/week05/images/wordpress-admin-dashboard.png)
+![](https://github.com/neil-oliver/data-structures/blob/master/week05/images/wordpress-admin-blogpost.jpg)
 ### Ghost
-![](https://github.com/neil-oliver/data-structures/blob/master/Week05/images/ghost-admin.png)
+![](https://github.com/neil-oliver/data-structures/blob/master/week05/images/ghost-admin.png)
 ### Tumblr
-![](https://github.com/neil-oliver/data-structures/blob/master/Week05/images/Tumblr-add-text-post.png)
+![](https://github.com/neil-oliver/data-structures/blob/master/week05/images/Tumblr-add-text-post.png)
 ## Initial Database Design
 Based on the initial research the initial NoSQL database design is:
 
