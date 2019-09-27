@@ -119,7 +119,6 @@ app.get('/', function (req, res) {
   res.send(html); 
 });
 
-//listen for information being sent from the browser (request)
 app.listen(8080, function () {
   console.log('Example app listening on port 8080!');
 });
