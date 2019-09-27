@@ -39,7 +39,7 @@ fs.readFile('data/AA-complete-data.json', 'utf8', (error, data) => {
         
         //create a query using the query string
         client.query(locationQuery, (err, res) => {
-            if (error) {
+            if (err) {
                 console.log(err, locationQuery);
             } else {
                 // in the information has been enetered correct and a new location ID has been created, continue to add the groups associated with that location
@@ -52,7 +52,7 @@ fs.readFile('data/AA-complete-data.json', 'utf8', (error, data) => {
                         var meetingQuery = escape("INSERT INTO groups VALUES (DEFAULT, %s, %L, %L) RETURNING Group_ID;", res.rows[0].location_id, group, "");
 
                     client.query(meetingQuery, (err, res) => {
-                        if (error) {
+                        if (err) {
                             console.log(err, meetingQuery);
                         } else {
                             // in the information has been enetered correct and a new group ID has been created, continue to add the events associated with that group
@@ -71,7 +71,7 @@ fs.readFile('data/AA-complete-data.json', 'utf8', (error, data) => {
                                     "");
 
                                 client.query(eventQuery, (err, res) => {
-                                    if (error) {
+                                    if (err) {
                                         console.log(err, eventQuery);
                                     } else {
                                         //confirm that the events have been created
