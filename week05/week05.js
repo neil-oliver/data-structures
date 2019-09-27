@@ -118,9 +118,11 @@ app.post('/', urlencodedParser, async function (req, res){
     if (err != null){
       console.log(err, err.stack); // an error occurred
       reply += "There was a problem saving your blog post.";
+      reply += '<br><input type="button" value="Go back and try again!" onclick="history.back()">';
     }else {
       console.log('success!');// successful response
-    reply += "Your blog post '" + req.body.title + "' has been successfully stored";
+      reply += "Your blog post '" + req.body.title + "' has been successfully stored";
+      reply += '<br><input type="button" value="Write another post!" onclick="history.back()">';
     }
     
     res.send(reply);
