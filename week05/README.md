@@ -1,4 +1,11 @@
-# Week 05
+# Week 05 Task
+
+Task instructions provided by [Aaron Hill](https://github.com/aaronxhill).
+
+Full instructions for this tasks can be found on the Parsons MSDV [Data Structures GitHub Page](https://github.com/visualizedata/data-structures/blob/master/weekly_assignment_05.md).
+
+This task requires a progress blog to be created using AWS DynamoDB. The project uses the [AWS Javascript SDK](https://www.npmjs.com/package/aws-sdk), the [express web framework](http://expressjs.com) and [body-parser](https://www.npmjs.com/package/body-parser) as dependencies.  
+  
 # Research
   
 ## Exisiting Blogs
@@ -58,3 +65,146 @@ Based on this research the following choices have been made:
   
 **Partition Key** : Category  
 **Sort Key** : Created *(Creation Date)*  
+
+# Design
+## Admin Page
+For easy entry of blog information (and to assist with the database design), first a basic HTML page was created.
+![](https://github.com/neil-oliver/data-structures/blob/master/week05/images/admin%20page.png)
+
+This HTML code was then transfered into node and displayed in the browser using the [express web framework](http://expressjs.com) and [body-parser](https://www.npmjs.com/package/body-parser) module to allow for information to be easily transfered between browser and server.
+**The webpage that is created is only accessible through the cloud9 server**.
+
+```javascript
+var express = require('express');
+var app = express();
+var bodyParser = require('body-parser');
+var urlencodedParser = bodyParser.urlencoded({ extended: true });
+
+app.get('/', function (req, res) {
+  var html='<!DOCTYPE html>\
+<html>\
+    <head>\
+        <title>Progress Blog Admin Page</title>\
+        <style>\
+            input, textarea {width : 50%;}\
+        </style>\
+    </head>\
+    <body>\
+        <form action="/" method="POST">\
+            Author<br>\
+            <input type="text" value="Admin" name="author"><br>\
+            Title<br>\
+            <input type="text" name="title" placeholder="required"><br>\
+            Category<br>\
+            <input type="text" name="category" placeholder="Required"><br>\
+            Content<br>\
+            <textarea name="content" rows="10"></textarea><br>\
+            Images<br>\
+            <input type="text" name="images" placeholder="Optional"><br>\
+            Tags<br>\
+            <input type="text" name="tags" placeholder="Optional"><br>\
+            How are you feeling?<br>\
+            <input type="text" name="emotion" placeholder="Optional"><br>\
+            What are you doing?<br>\
+            <input type="text" name="activity" placeholder="Optional"><br>\
+            What are you eating?<br>\
+            <input type="text" name="food" placeholder="Optional"><br>\
+            Publish &nbsp;\
+            <input type="checkbox" name="published"><br>\
+            <input type="submit">\
+        </form>\
+    </body>\
+</html>';
+
+  res.send(html); 
+});
+
+//listen for information being sent from the browser (request)
+app.listen(8080, function () {
+  console.log('Example app listening on port 8080!');
+});
+
+app.post('/', urlencodedParser, async function (req, res){
+    res.send(reply);
+ });
+```
+
+## Saving to DynamoDB
+To ensure condsistent data is saved to the database, a constructor is used to build the information being sent to the DynamoDB database.
+```javascript
+class BlogEntry {
+  constructor(category, created, title, author, content, published, tags, images, emotion, activity, food) {
+    this.category = {}; // Partition Key
+    this.category.S = category;
+    this.created = {}; // Sort Key
+    this.created.S = created;
+    this.updated = {};
+    this.updated.S = Date.now().toString();
+    this.title = {};
+    this.title.S = title;
+    this.author = {};
+    this.author.S = author;
+    this.content = {};
+    this.content.S = content;
+    this.published = {};
+    if (published == 'on'){
+      this.published.BOOL = true;
+    } else {
+      this.published.BOOL = false;
+    }
+    if (tags != "") {
+      this.tags = {};
+      this.tags.SS = '[' + tags + ']';
+    }
+    if (images != "") {
+      this.images = {};
+      this.images.SS = '[' + images + ']';
+    }
+    if (emotion != "") {
+      this.emotion = {};
+      this.emotion.S = emotion;
+    }
+    if (activity != "") {
+      this.activity = {};
+      this.activity.S = activity;
+    }
+    if (food != "") {
+      this.food = {};
+      this.food.SS = '[' + food + ']'; 
+    }
+  }
+}
+```
+When the submit button is pressed on the admin page, the information is sent back to the server and used to build a blog post using the contructor above. This blog post is then sent to the dynamoDB server.
+```javascript
+app.post('/', urlencodedParser, async function (req, res){
+  
+  var post = new BlogEntry(req.body.category, Date.now().toString(), req.body.title, req.body.author, req.body.content, req.body.published, req.body.tags, req.body.images, req.body.emotion, req.body.activity, req.body.food);
+  
+  var params = {};
+  params.Item = post; 
+  params.TableName = "process-blog";
+  var reply='';
+  
+  dynamodb.putItem(params, function (err, data) {
+    
+    if (err != null){
+      console.log(err, err.stack); // an error occurred
+      reply += "There was a problem saving your blog post.";
+      reply += '<br><input type="button" value="Go back and try again!" onclick="history.back()">';
+    }else {
+      console.log('success!');// successful response
+      reply += "Your blog post '" + req.body.title + "' has been successfully stored";
+      reply += '<br><input type="button" value="Write another post!" onclick="history.back()">';
+    }
+    
+    res.send(reply);
+  });
+ });
+```
+## Post Confirmation
+The response from the ```putItem``` request is checked for an error before displaying a message on the admin HTML page.
+![](https://github.com/neil-oliver/data-structures/blob/master/week05/images/success-message.png)
+
+The AWS Console also allows for the information to be displayed. This allows for easy confirmation that the information has been saved.
+![](https://github.com/neil-oliver/data-structures/blob/master/week05/images/database-screenshot.png)
