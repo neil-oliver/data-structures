@@ -10,17 +10,17 @@ Three popular blog interfaces were investigated to see common features that may 
 ![](https://github.com/neil-oliver/data-structures/blob/master/week05/images/Tumblr-add-text-post.png)
 ## Initial Database Design
 Based on the initial research the initial NoSQL database design is:
-
-**Title** : String
-**Author** : String
-**Created** : Javascript Date Format
-**Updated** : Javascript Date Format
-**Content** : String *(HTML)*
-**Category** : [String]
-**Tags** : [String]
-**Images** : [String] *(Hyperlinks)*
-**Publish** : Bool
-
+  
+**Title** : String  
+**Author** : String  
+**Created** : Javascript Date Format  
+**Updated** : Javascript Date Format  
+**Content** : String *(HTML)*  
+**Category** : [String]  
+**Tags** : [String]  
+**Images** : [String] *(Hyperlinks)*  
+**Publish** : Bool  
+  
 ### Exclusions
 Details such as links to social media, comments and different levels of access are not required. If additional links are required they can be included in the HTML of the content field. 
 
