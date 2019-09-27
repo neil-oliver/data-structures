@@ -1,5 +1,7 @@
 # Week 05
-## Research
+# Research
+  
+## Exisiting Blogs
 Three popular blog interfaces were investigated to see common features that may be useful to include in the design of the progress blog. 
 ### Wordpress
 ![](https://github.com/neil-oliver/data-structures/blob/master/week05/images/wordpress-admin-dashboard.png)
@@ -8,7 +10,7 @@ Three popular blog interfaces were investigated to see common features that may 
 ![](https://github.com/neil-oliver/data-structures/blob/master/week05/images/ghost-admin.png)
 ### Tumblr
 ![](https://github.com/neil-oliver/data-structures/blob/master/week05/images/Tumblr-add-text-post.png)
-### AWS DynamoDB Data Types
+## AWS DynamoDB Data Types
 ![](https://github.com/neil-oliver/data-structures/blob/master/week05/images/DynamoDB-Datatypes.png)
 ## Initial Database Design
 Based on the initial research the initial NoSQL database design is:
