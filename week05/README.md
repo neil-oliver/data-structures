@@ -203,8 +203,10 @@ app.post('/', urlencodedParser, async function (req, res){
  });
 ```
 ## Post Confirmation
-The response from the ```putItem``` request is checked for an error before displaying a message on the admin HTML page.
+The response from the ```putItem``` request is checked for an error before displaying a message on the admin HTML page. 
+  
 ![](https://github.com/neil-oliver/data-structures/blob/master/week05/images/success-message.png)
 
-The AWS Console also allows for the information to be displayed. This allows for easy confirmation that the information has been saved.
+The AWS Console also allows for the information to be displayed. This allows for easy confirmation that the information has been saved.  
+  
 ![](https://github.com/neil-oliver/data-structures/blob/master/week05/images/database-screenshot.png)
