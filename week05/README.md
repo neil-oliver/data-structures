@@ -25,7 +25,7 @@ Based on the initial research the initial NoSQL database design is:
 **Category** : String  
 **Emotion** : String  
 **Food** : String  
-**Activity** : String. 
+**Activity** : String  
 **Tags** : [String]  
 **Images** : [String] *(Hyperlinks)*  
 **Publish** : Bool  
