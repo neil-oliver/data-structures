@@ -29,7 +29,8 @@ Due to cost limitations, no additional indexes will be placed on the NoSQL Dynam
 
 
 ### AWS Dynamo Query Expressions
-The [AWS Documentation](https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/Query.html#FilteringResults) gives some very important information about the different posibilities between querying the partition key and the sort key.
+The [AWS Documentation](https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/Query.html#FilteringResults) gives some very important information about the different posibilities between querying the partition key and the sort key. 
+  
 **You must specify the partition key name and value as an equality condition.**  
 *You can optionally provide a second condition for the sort key (if present). The sort key condition must use one of the following comparison operators:*  
   
