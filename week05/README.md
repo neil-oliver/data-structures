@@ -23,7 +23,7 @@ Popular blog and social media interfaces were investigated to see common feature
 ![](https://github.com/neil-oliver/data-structures/blob/master/week05/images/DynamoDB-Datatypes.png)
 ## Initial Database Design
 Based on the initial research the initial NoSQL database design is:
-![](https://github.com/neil-oliver/data-structures/blob/master/week05/images/process_blog_design.png  
+![](https://github.com/neil-oliver/data-structures/blob/master/week05/images/process_blog_design.png)  
 **Title** : String  
 **Author** : String  
 **Created** : Javascript Date Format  
