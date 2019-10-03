@@ -113,7 +113,7 @@ request(apiRequest, function(err, resp, body) {
   });
 ```
 These coordinates are used to create a calculated ```distance``` column in the returned results. The calculation could have used [Pythagorean Theorem](https://en.wikipedia.org/wiki/Pythagorean_theorem) to calculate distances that would have been sufficient as the distance is short and only userd for ordering results, however i opted to instead include the calculation that includes taking into account the curvature of the earth.  
-**Possible Improvement: Another more useful option for later implementation may be the use of the [Good Maps Directions API](https://developers.google.com/maps/documentation/directions/intro).**
+**Possible Improvement: Another more useful option for later implementation may be the use of the [Google Maps Directions API](https://developers.google.com/maps/documentation/directions/intro).**
 ```javascript
             var thisQuery = "SELECT locations.Extended_Address, groups.Group_Name, events.Start_at ";
             thisQuery += ", 2 * 3961 * asin(sqrt((sin(radians((" + lat + " - locations.lat) / 2))) ^ 2 + cos(radians(locations.lat)) * cos(radians(" + lat + ")) * (sin(radians((" + lon + " - locations.long) / 2))) ^ 2)) as distance ";
