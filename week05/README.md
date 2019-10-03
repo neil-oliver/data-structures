@@ -209,3 +209,7 @@ The response from the ```putItem``` request is checked for an error before displ
 The AWS Console also allows for the information to be displayed. This allows for easy confirmation that the information has been saved.  
   
 ![](https://github.com/neil-oliver/data-structures/blob/master/week05/images/database-screenshot.png)
+
+## Date Update
+While DynamoDB does support the Epoch number format (including TTL support), the ISO 8061 format is more human readable and also supported. The database design was updated to use the ISO 8061 format as is show in the screenshot below.
+![](https://github.com/neil-oliver/data-structures/blob/master/week05/images/time-update.png)
