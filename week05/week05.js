@@ -18,7 +18,7 @@ class BlogEntry {
     this.created = {}; // Sort Key
     this.created.S = created;
     this.updated = {};
-    this.updated.S = Date.now().toString();
+    this.updated.S = new Date().toISOString();
     this.title = {};
     this.title.S = title;
     this.author = {};
@@ -104,8 +104,8 @@ app.post('/', urlencodedParser, async function (req, res){
   
   // construct the blog post using the data
   // reminder: constructor(category, created, title, author, content, published, tags, images, emotion, activity, food) 
-  var post = new BlogEntry(req.body.category, Date.now().toString(), req.body.title, req.body.author, req.body.content, req.body.published, req.body.tags, req.body.images, req.body.emotion, req.body.activity, req.body.food);
-  
+  var post = new BlogEntry(req.body.category, new Date().toISOString(), req.body.title, req.body.author, req.body.content, req.body.published, req.body.tags, req.body.images, req.body.emotion, req.body.activity, req.body.food);
+  console.log(post)
   // set up putItem for DynamoDB
   var params = {};
   params.Item = post; 
