@@ -1,8 +1,11 @@
 # Week 06 Task
+Task instructions provided by [Aaron Hill](https://github.com/aaronxhill).
+
+Full instructions for this tasks can be found on the Parsons MSDV [Data Structures GitHub Page](https://github.com/neil-oliver/data-structures/tree/master/week06).
 
 ### Changes Made to previous tasks
-- Week 5 task - date format change to ISO 8061
-- Week 04 task - time changed from string to ```time without timezone``` format.
+- Week 05 Task - Date format change from number to ISO 8061
+- Week 04 task - Time changed from string to ```time without timezone``` format.
 
 ## Progress Blog Query
 Query using both category and allowing a time period (between) for the creation of the post to be specified.
