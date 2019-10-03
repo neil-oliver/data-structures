@@ -6,10 +6,11 @@ var dynamodb = new AWS.DynamoDB();
 
 var params = {
     TableName : "process-blog",
-    KeyConditionExpression: "category = :categoryName and created = :created", // the query expression
+    KeyConditionExpression: "category = :categoryName and created between :minDate and :maxDate", // the query expression
     ExpressionAttributeValues: { // the query values
-        ":categoryName": {S: "development"},
-        ":created": {S: "1569609251575"}
+        ":categoryName": {S: "data-structures"},
+        ":minDate": {S: new Date("August 28, 2019").toISOString()},
+        ":maxDate": {S: new Date("October 11, 2019").toISOString()}
     }
 };
 

@@ -52,8 +52,8 @@ if (drop == true) {
     query += "CREATE TABLE events (Event_ID serial primary key,\
                                     Group_ID int references groups(Group_ID),\
                                     Day varchar(100),\
-                                    Start_at varchar(10),\
-                                    End_at varchar(10),\
+                                    Start_at time,\
+                                    End_at time,\
                                     Type_ID varchar(20),\
                                     Details varchar(100));";
 }
