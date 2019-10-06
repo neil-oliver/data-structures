@@ -168,7 +168,7 @@ function geocode(name, zip, address){
                 
                 if (matchScore < 100){
                     var compare = matchScore + ',' + tamuGeo['InputAddress']['StreetAddress'] + ',' + tamuGeo['InputAddress']['City'] + ',' + tamuGeo['InputAddress']['State'] + ',' + tamuGeo['InputAddress']['Zip']
-                    compare += ',' + name + ',' + address.line_1 + ',' + address.state + ',' + zip
+                    compare += ',"' + name + '",' + address.line_1 + ',' + address.state + ',' + zip
                     console.log(compare)
                     fs.appendFileSync('data/less-than-perfect.csv', compare + '\n' );
                 }
