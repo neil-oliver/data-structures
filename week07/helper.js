@@ -4,14 +4,14 @@ function makeCSV(jsonFile,writeFile){
     var meetings = JSON.parse(jsonFile)
     
     // Wipe text file and add headings
-    fs.writeFileSync(writeFile, "Location_Name,Address_Line_1,City,State,Zipcode,Extended_Address,Latitude,Longitude,Score,Zone,Meeting_Name,Day,Start,End,Type\n");
+    fs.writeFileSync(writeFile, "Location_Name,Address_Line_1,City,State,Zipcode,Extended_Address,Latitude,Longitude,Score,Zone,Meeting_Name,Details,Day,Start,End,Type,SpecialInterest\n");
     
     for (var locationName in meetings) {
         if (meetings.hasOwnProperty(locationName)) {
 
             for (var meetingName in meetings[locationName]['meetings']){
 
-                for (let i = 0; i < meetings[locationName]['meetings'][meetingName].length; i++) { 
+                for (let i = 0; i < meetings[locationName]['meetings'][meetingName]['times'].length; i++) { 
                                     
                     var saveString = 
                         '"' + locationName + '"' + ',' +
@@ -26,10 +26,12 @@ function makeCSV(jsonFile,writeFile){
                         meetings[locationName]['address']['zone'] + ',' +
 
                         '"' + meetingName + '"' + ',' +
-                        meetings[locationName]['meetings'][meetingName][i]['day'] + ',' +
-                        meetings[locationName]['meetings'][meetingName][i]['start'] + ',' +
-                        meetings[locationName]['meetings'][meetingName][i]['end'] + ',' +
-                        meetings[locationName]['meetings'][meetingName][i]['type']
+                        '"' + meetingName['details'] + '"' + ',' +
+                        meetings[locationName]['meetings'][meetingName]['times'][i]['day'] + ',' +
+                        meetings[locationName]['meetings'][meetingName]['times'][i]['start'] + ',' +
+                        meetings[locationName]['meetings'][meetingName]['times'][i]['end'] + ',' +
+                        meetings[locationName]['meetings'][meetingName]['times'][i]['type'] + ',' +
+                        meetings[locationName]['meetings'][meetingName]['times'][i]['SpecialInterest'];
                     
                     // Save CSV into text file
                     fs.appendFileSync(writeFile, saveString + '\n');

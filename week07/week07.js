@@ -52,7 +52,10 @@ for (let i = 0; i < 10; i++) {
                 if ($(this).children().eq(0).find('span').text().trim() == "Wheelchair access"){
                    access = true 
                 }
-    
+                
+                //Extract the meeting additional details
+                var detailsBox = $(this).children().eq(0).find($('.detailsBox')).text().trim();
+
                 // Delete additional html code within the table row
                 $(this).children().eq(0).find('div').remove().html();
                 $(this).children().eq(0).find('b').remove().html();
@@ -63,7 +66,7 @@ for (let i = 0; i < 10; i++) {
                 $(this).children().eq(0).find('h4').remove().html();
                 
                 // Extract the location details. Split at a new line, deleting white space and blank lines
-                var location = $(this).children().eq(0).text().split(/\n|,|\(|\)|-/).map(item => item.trim()).filter(Boolean);
+                var location = $(this).children().eq(0).text().split(/\n|,|\(|\)|-|@/).map(item => item.trim()).filter(Boolean);
                 
                 // Replace E in address with East
                 location[0] = location[0].replace(" E ", " East ");
@@ -73,6 +76,9 @@ for (let i = 0; i < 10; i++) {
                 location[0] = location[0].replace(" St ", " Street ");
                 location[0] = location[0].replace(" Av ", " Avenue ");
                 location[0] = location[0].replace(" Av. ", " Avenue ");
+                location[0] = location[0].replace(" Ave ", " Avenue ");
+                location[0] = location[0].replace(" street ", " Street ");
+
                
                //Check is address line 1 only contains digits, if so, join the next line
                if ((location[0].replace(/\D+/g, '').length == 0) || (location[0].replace(/\d/g,'').length == 0)){
@@ -80,13 +86,25 @@ for (let i = 0; i < 10; i++) {
                    location.splice(1,1)
                }
                
+               //Split after 'Street.' and take the first part of the array
+               var newLoc = location[0].split('Street.');
+               location[0] = newLoc[0];
+               
+               //Split after 'Rm' and take the first part of the array
+               newLoc = location[0].split('Rm');
+               location[0] = newLoc[0];
+               
+               //Replace 'St.' with Street at the END of the address only
+               if (location[0].substr(location[0].length - 3) == 'St.' || location[0].substr(location[0].length - 2) == 'St') {
+                   location[0] = location[0].replace(" St.", " Street");
+               }
                
                // Some location names are blank so use the first line of the address
                 if (locationName == "") {
-                    locationName = location[0]
+                    locationName = location[0];
                 }
                 
-                var zipcode = location[location.length - 1].slice(-5).replace(/\D+/g, '')
+                var zipcode = location[location.length - 1].slice(-5).replace(/\D+/g, '');
                 
                 //Create an address object
                 var addressObj = {
@@ -98,7 +116,7 @@ for (let i = 0; i < 10; i++) {
                     wheelchair_access: access,
                     zone : num
                 };
-    
+                
                 //If the meetings object does not contain this address, add it.
                 if (!(meetings.hasOwnProperty(locationName))){
                     meetings[locationName] = {
@@ -108,24 +126,34 @@ for (let i = 0; i < 10; i++) {
                 }
                 
                 //Extract the meeting times into an array
-                var meetingTimes = $(this).children().eq(1).text().split('\n').map(item => item.trim()).filter(Boolean)
+                var meetingTimes = $(this).children().eq(1).text().split('\n').map(item => item.trim()).filter(Boolean);
                 
                 //For each meeting time, itterate through and extract the details into an object.
                 for (let x = 0; x < meetingTimes.length; x++) { 
                 
-                    var times = meetingTimes[x].split(' ')
+                    var specialInterest = meetingTimes[x].split(' Special Interest ');
+                    specialInterest = specialInterest[1];
+                    if (!specialInterest){
+                        specialInterest = '';
+                    }
+                    
+                    var times = meetingTimes[x].split(' ');
                     var timesObj = {
                         day : times[0],
                         start : times[3]+' '+times[4],
                         end : times[6]+' '+times[7],
-                        type : times[10]
+                        type : times[10],
+                        specialInterest : specialInterest
                     }
                     
                     //If the meeting has already been created, append the meeting times, else add the meeting and times.
                     if (meetings[locationName]['meetings'].hasOwnProperty(meetingName)) {
-                        meetings[locationName]['meetings'][meetingName].push(timesObj)
+                        meetings[locationName]['meetings'][meetingName]['times'].push(timesObj);
                     } else {
-                        meetings[locationName]['meetings'][meetingName] = [timesObj]
+                        meetings[locationName]['meetings'][meetingName] = {};
+                        meetings[locationName]['meetings'][meetingName]['times'] = [timesObj];
+                        meetings[locationName]['meetings'][meetingName]['details'] = detailsBox;
+
                     }
                 };
                 
@@ -169,7 +197,6 @@ function geocode(name, zip, address){
                 if (matchScore < 100){
                     var compare = matchScore + ',' + tamuGeo['InputAddress']['StreetAddress'] + ',' + tamuGeo['InputAddress']['City'] + ',' + tamuGeo['InputAddress']['State'] + ',' + tamuGeo['InputAddress']['Zip']
                     compare += ',"' + name + '",' + address.line_1 + ',' + address.state + ',' + zip
-                    console.log(compare)
                     fs.appendFileSync('data/less-than-perfect.csv', compare + '\n' );
                 }
                 
