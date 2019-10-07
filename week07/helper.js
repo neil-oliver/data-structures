@@ -14,19 +14,19 @@ function makeCSV(jsonFile,writeFile){
                 for (let i = 0; i < meetings[locationName]['meetings'][meetingName]['times'].length; i++) { 
                                     
                     var saveString = 
-                        '"' + locationName + '"' + ',' +
+                        "'" + locationName + "'" + ',' +
                         meetings[locationName]['address']['line_1'] + ',' +
                         meetings[locationName]['address']['city'] + ',' +
                         meetings[locationName]['address']['state'] + ',' +
-                        meetings[locationName]['address']['zip'] + ',' + '"' +
-                        meetings[locationName]['address']['friendly'] + '"' + ',' +
+                        meetings[locationName]['address']['zip'] + ',' + "'" +
+                        meetings[locationName]['address']['friendly'] + "'" + ',' +
                         meetings[locationName]['address']['coords']['latitude'] + ',' +
                         meetings[locationName]['address']['coords']['longitude'] + ',' +
                         meetings[locationName]['address']['coords']['score'] + ',' +
                         meetings[locationName]['address']['zone'] + ',' +
 
-                        '"' + meetingName + '"' + ',' +
-                        '"' + meetings[locationName]['meetings'][meetingName]['details'] + '"' + ',' +
+                        "'" + meetingName + "'" + ',' +
+                        "'" + meetings[locationName]['meetings'][meetingName]['details'] + "'" + ',' +
                         meetings[locationName]['meetings'][meetingName]['times'][i]['day'] + ',' +
                         meetings[locationName]['meetings'][meetingName]['times'][i]['start'] + ',' +
                         meetings[locationName]['meetings'][meetingName]['times'][i]['end'] + ',' +
