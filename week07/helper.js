@@ -14,7 +14,7 @@ function makeCSV(jsonFile,writeFile){
                 for (let i = 0; i < meetings[locationName]['meetings'][meetingName]['times'].length; i++) { 
                                     
                     var saveString = 
-                        "'" + locationName + "'" + ',' +
+                        '"' + locationName + '"' + ',' +
                         meetings[locationName]['address']['line_1'] + ',' +
                         meetings[locationName]['address']['city'] + ',' +
                         meetings[locationName]['address']['state'] + ',' +
@@ -34,7 +34,7 @@ function makeCSV(jsonFile,writeFile){
                         meetings[locationName]['meetings'][meetingName]['times'][i]['specialInterest'] + '"';
                         
                     // Save CSV into text file
-                    fs.appendFileSync(writeFile, saveString+ '\n');
+                    fs.appendFileSync(writeFile, saveString + '\n');
                 }
             }
         }
