@@ -34,7 +34,7 @@ function makeCSV(jsonFile,writeFile){
                         meetings[locationName]['meetings'][meetingName]['times'][i]['specialInterest'] + "'";
                         
                     // Save CSV into text file
-                    fs.appendFileSync(writeFile, saveString.replace(/"/g, '\\"') + '\n');
+                    fs.appendFileSync(writeFile, saveString.replace(/"/g, '"""') + '\n');
                 }
             }
         }
