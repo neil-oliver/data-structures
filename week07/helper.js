@@ -18,23 +18,23 @@ function makeCSV(jsonFile,writeFile){
                         meetings[locationName]['address']['line_1'] + ',' +
                         meetings[locationName]['address']['city'] + ',' +
                         meetings[locationName]['address']['state'] + ',' +
-                        meetings[locationName]['address']['zip'] + ',' + "'" +
-                        meetings[locationName]['address']['friendly'] + "'" + ',' +
+                        meetings[locationName]['address']['zip'] + ',' + '"' +
+                        meetings[locationName]['address']['friendly'] + '"' + ',' +
                         meetings[locationName]['address']['coords']['latitude'] + ',' +
                         meetings[locationName]['address']['coords']['longitude'] + ',' +
                         meetings[locationName]['address']['coords']['score'] + ',' +
                         meetings[locationName]['address']['zone'] + ',' +
 
-                        "'" + meetingName + "'" + ',' +
-                        "'" + meetings[locationName]['meetings'][meetingName]['details'] + "'" + ',' +
+                        '"' + meetingName + '"' + ',' +
+                        '"' + meetings[locationName]['meetings'][meetingName]['details'] + '"' + ',' +
                         meetings[locationName]['meetings'][meetingName]['times'][i]['day'] + ',' +
                         meetings[locationName]['meetings'][meetingName]['times'][i]['start'] + ',' +
                         meetings[locationName]['meetings'][meetingName]['times'][i]['end'] + ',' +
-                        meetings[locationName]['meetings'][meetingName]['times'][i]['type'] + ',' + "'" +
-                        meetings[locationName]['meetings'][meetingName]['times'][i]['specialInterest'] + "'";
+                        meetings[locationName]['meetings'][meetingName]['times'][i]['type'] + ',' + '"' +
+                        meetings[locationName]['meetings'][meetingName]['times'][i]['specialInterest'] + '"';
                         
                     // Save CSV into text file
-                    fs.appendFileSync(writeFile, saveString.replace(/"/g, '') + '\n');
+                    fs.appendFileSync(writeFile, saveString+ '\n');
                 }
             }
         }
