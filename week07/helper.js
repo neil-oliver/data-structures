@@ -26,12 +26,12 @@ function makeCSV(jsonFile,writeFile){
                         meetings[locationName]['address']['zone'] + ',' +
 
                         '"' + meetingName + '"' + ',' +
-                        '"' + meetingName['details'] + '"' + ',' +
+                        '"' + meetings[locationName]['meetings'][meetingName]['details'] + '"' + ',' +
                         meetings[locationName]['meetings'][meetingName]['times'][i]['day'] + ',' +
                         meetings[locationName]['meetings'][meetingName]['times'][i]['start'] + ',' +
                         meetings[locationName]['meetings'][meetingName]['times'][i]['end'] + ',' +
-                        meetings[locationName]['meetings'][meetingName]['times'][i]['type'] + ',' +
-                        meetings[locationName]['meetings'][meetingName]['times'][i]['SpecialInterest'];
+                        meetings[locationName]['meetings'][meetingName]['times'][i]['type'] + ',' + '"' +
+                        meetings[locationName]['meetings'][meetingName]['times'][i]['specialInterest'] + '"';
                     
                     // Save CSV into text file
                     fs.appendFileSync(writeFile, saveString + '\n');
