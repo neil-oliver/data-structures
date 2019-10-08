@@ -45,7 +45,7 @@ if (drop == true) {
     query += "CREATE TABLE groups (Group_ID serial primary key,\
                                     Location_ID int references locations(Location_ID),\
                                     Group_Name varchar(100),\
-                                    Details varchar(100));";
+                                    Details varchar(500));";
     
 
     // * Note for improvement: start and end could be time datatype but will not accept current JSON value                         
@@ -55,7 +55,7 @@ if (drop == true) {
                                     Start_at time,\
                                     End_at time,\
                                     Type_ID varchar(20),\
-                                    Details varchar(100));";
+                                    Details varchar(500));";
 }
 
 // Uncomment this to check Schema                               

@@ -153,3 +153,72 @@ for (let x = 0; x < meetingTimes.length; x++) {
 ```
 ## Update Helper
 The Helper file was updated to reflect the changes to the JSON.
+Due to an error with double quotes in the meeting description confusing the GitHub presentation of the CSV, they were removed using the line:
+```javascript
+meetings[locationName]['meetings'][meetingName]['details'].replace(/["]+/g, '');
+```
+This does not affect the saved JSON data (that is used to save into the database) where the double quotes are not an issue.
+
+## Database Update
+The database was already setup with the ability to store the additional details for both groups and events so need changes are needed to the initial setup.
+The ```week07b.js``` file did need to be updated not only to add the newly scraped details, but also to amend the location of the event data in the JSON file. 
+#### Original
+```javascript
+var meetingQuery = escape("INSERT INTO groups VALUES (DEFAULT, %s, %L, %L) RETURNING Group_ID;", res.rows[0].location_id, group, "");
+
+var eventQuery = escape("INSERT INTO events VALUES (DEFAULT, %s, %L, %L, %L, %L, %L) RETURNING Event_ID;",
+res.rows[0].group_id,
+meetings[location]['meetings'][group][event]['day'],
+meetings[location]['meetings'][group][event]['start'],
+meetings[location]['meetings'][group][event]['end'],
+meetings[location]['meetings'][group][event]['type'],
+"");
+```
+#### Updated
+```javascript
+var meetingQuery = escape("INSERT INTO groups VALUES (DEFAULT, %s, %L, %L) RETURNING Group_ID;", res.rows[0].location_id, group, meetings[location]['meetings'][group]['details']);
+
+var eventQuery = escape("INSERT INTO events VALUES (DEFAULT, %s, %L, %L, %L, %L, %L) RETURNING Event_ID;",
+res.rows[0].group_id,
+meetings[location]['meetings'][group]['times'][event]['day'],
+meetings[location]['meetings'][group]['times'][event]['start'],
+meetings[location]['meetings'][group]['times'][event]['end'],
+meetings[location]['meetings'][group]['times'][event]['type'],
+meetings[location]['meetings'][group]['times'][event]['specialInterest']
+);
+```
+
+### Database Output Check
+The ```DBOutput.json``` creation file from Week04 was ran on the new database file to check the output. Below is a sample.
+```javascript
+  {
+    "location_id": 1,
+    "location_name": "Harlem Children's Zone Admin. Offices",
+    "address_line_1": "35 East 125 Street",
+    "city": "New York",
+    "state": "NY",
+    "zipcode": "10035",
+    "accessible": true,
+    "extended_address": "35 East 125 Street,1st Floor Conference Room,Madison Avenue,10035",
+    "lat": 40.805958,
+    "long": -73.940763,
+    "zone": 9
+  },
+  ...
+    {
+    "group_id": 70,
+    "location_id": 81,
+    "group_name": "Grupo Trasmitelo",
+    "details": "Spanish speaking meeting."
+  },
+  ...
+    {
+    "event_id": 75,
+    "group_id": 120,
+    "day": "Tuesdays",
+    "start_at": "18:30:00",
+    "end_at": "19:30:00",
+    "type_id": "B",
+    "details": "Living Sober"
+  }
+```

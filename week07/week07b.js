@@ -49,7 +49,7 @@ fs.readFile('data/AA-complete-data.json', 'utf8', (error, data) => {
                 async.forEachOf(meetings[location]['meetings'], function(groupObj,group, callback) {
                     const client = new Client(db_credentials);
                     client.connect();
-                        var meetingQuery = escape("INSERT INTO groups VALUES (DEFAULT, %s, %L, %L) RETURNING Group_ID;", res.rows[0].location_id, group, "");
+                        var meetingQuery = escape("INSERT INTO groups VALUES (DEFAULT, %s, %L, %L) RETURNING Group_ID;", res.rows[0].location_id, group, meetings[location]['meetings'][group]['details']);
 
                     client.query(meetingQuery, (err, res) => {
                         if (err) {
@@ -59,16 +59,17 @@ fs.readFile('data/AA-complete-data.json', 'utf8', (error, data) => {
                             console.log('Group ID: ' + res.rows[0].group_id);
                             client.end();
                             
-                            async.forEachOf(meetings[location]['meetings'][group], function(eventObj,event, callback) {
+                            async.forEachOf(meetings[location]['meetings'][group]['times'], function(eventObj,event, callback) {
                                 const client = new Client(db_credentials);
                                 client.connect();
                                     var eventQuery = escape("INSERT INTO events VALUES (DEFAULT, %s, %L, %L, %L, %L, %L) RETURNING Event_ID;",
                                     res.rows[0].group_id,
-                                    meetings[location]['meetings'][group][event]['day'],
-                                    meetings[location]['meetings'][group][event]['start'],
-                                    meetings[location]['meetings'][group][event]['end'],
-                                    meetings[location]['meetings'][group][event]['type'],
-                                    "");
+                                    meetings[location]['meetings'][group]['times'][event]['day'],
+                                    meetings[location]['meetings'][group]['times'][event]['start'],
+                                    meetings[location]['meetings'][group]['times'][event]['end'],
+                                    meetings[location]['meetings'][group]['times'][event]['type'],
+                                    meetings[location]['meetings'][group]['times'][event]['specialInterest']
+                                    );
 
                                 client.query(eventQuery, (err, res) => {
                                     if (err) {
