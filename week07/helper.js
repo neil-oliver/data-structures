@@ -26,7 +26,7 @@ function makeCSV(jsonFile,writeFile){
                         meetings[locationName]['address']['zone'] + ',' +
 
                         '"' + meetingName + '"' + ',' +
-                        '"' + meetings[locationName]['meetings'][meetingName]['details'] + '"' + ',' +
+                        '"' + meetings[locationName]['meetings'][meetingName]['details'].replace(/["]+/g, '') + '"' + ',' +
                         meetings[locationName]['meetings'][meetingName]['times'][i]['day'] + ',' +
                         meetings[locationName]['meetings'][meetingName]['times'][i]['start'] + ',' +
                         meetings[locationName]['meetings'][meetingName]['times'][i]['end'] + ',' +
