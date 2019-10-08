@@ -54,7 +54,7 @@ for (let i = 0; i < 10; i++) {
                 }
                 
                 //Extract the meeting additional details
-                var detailsBox = $(this).children().eq(0).find($('.detailsBox')).text().trim().replace('"','');
+                var detailsBox = $(this).children().eq(0).find($('.detailsBox')).text().trim();
 
                 // Delete additional html code within the table row
                 $(this).children().eq(0).find('div').remove().html();
