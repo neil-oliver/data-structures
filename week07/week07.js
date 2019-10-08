@@ -19,17 +19,17 @@ fs.writeFileSync('data/less-than-perfect.csv', "matchScore,street,city,state,zip
 
 for (let i = 0; i < 10; i++) {
     
-    console.log("processing file No." + (i+1))
+    console.log("processing file No." + (i+1));
     
     //create a number for use in the url with a leading zero
     let num = 0;
     
     //If the iterator is below 9 
     if (i < 9) {
-        num = '0' + (i+1)
+        num = '0' + (i+1);
     } else {
-        num = (i+1)
-    };
+        num = (i+1);
+    }
     
     // Read text file with saved HTML data
     fs.readFile('/home/ec2-user/environment/week01/data/AA-data-' + num + '.txt', 'utf8', (error, data) => {
@@ -43,18 +43,18 @@ for (let i = 0; i < 10; i++) {
             if (i != 0){
                 //Extract meeting name
                 var meetingName = $(this).children().eq(0).find('b').text();
-                meetingName = meetingName.split(' - ')
-                meetingName = meetingName[0].toLowerCase()
-                meetingName = toTitleCase(meetingName)
+                meetingName = meetingName.split(' - ');
+                meetingName = meetingName[0].toLowerCase();
+                meetingName = toTitleCase(meetingName);
                 
                 //Extract if Wheelchair access is available
-                var access = false
+                var access = false;
                 if ($(this).children().eq(0).find('span').text().trim() == "Wheelchair access"){
-                   access = true 
+                   access = true ;
                 }
                 
                 //Extract the meeting additional details
-                var detailsBox = $(this).children().eq(0).find($('.detailsBox')).text().trim();
+                var detailsBox = $(this).children().eq(0).find($('.detailsBox')).text().trim().replace('"','');
 
                 // Delete additional html code within the table row
                 $(this).children().eq(0).find('div').remove().html();
@@ -62,7 +62,7 @@ for (let i = 0; i < 10; i++) {
                 $(this).children().eq(0).find('span').remove().html();
                 
                 //Extract the name in the H4 and check that the location has a name
-                var locationName = $(this).children().eq(0).find('h4').text()
+                var locationName = $(this).children().eq(0).find('h4').text();
                 $(this).children().eq(0).find('h4').remove().html();
                 
                 // Extract the location details. Split at a new line, deleting white space and blank lines
@@ -82,8 +82,8 @@ for (let i = 0; i < 10; i++) {
                
                //Check is address line 1 only contains digits, if so, join the next line
                if ((location[0].replace(/\D+/g, '').length == 0) || (location[0].replace(/\d/g,'').length == 0)){
-                   location[0] = location[0]+" "+location[1]
-                   location.splice(1,1)
+                   location[0] = location[0]+" "+location[1];
+                   location.splice(1,1);
                }
                
                //Split after 'Street.' and take the first part of the array
@@ -130,42 +130,45 @@ for (let i = 0; i < 10; i++) {
                 
                 //For each meeting time, itterate through and extract the details into an object.
                 for (let x = 0; x < meetingTimes.length; x++) { 
-                
-                    var specialInterest = meetingTimes[x].split(' Special Interest ');
-                    specialInterest = specialInterest[1];
-                    if (!specialInterest){
-                        specialInterest = '';
-                    }
-                    
+                    // avoid the issues where some entries seem to have left the template in place. 
                     var times = meetingTimes[x].split(' ');
-                    var timesObj = {
-                        day : times[0],
-                        start : times[3]+' '+times[4],
-                        end : times[6]+' '+times[7],
-                        type : times[10],
-                        specialInterest : specialInterest
-                    }
-                    
-                    //If the meeting has already been created, append the meeting times, else add the meeting and times.
-                    if (meetings[locationName]['meetings'].hasOwnProperty(meetingName)) {
-                        meetings[locationName]['meetings'][meetingName]['times'].push(timesObj);
-                    } else {
-                        meetings[locationName]['meetings'][meetingName] = {};
-                        meetings[locationName]['meetings'][meetingName]['times'] = [timesObj];
-                        meetings[locationName]['meetings'][meetingName]['details'] = detailsBox;
 
+                    if (times[0] != 's'){
+                        var specialInterest = meetingTimes[x].split(' Special Interest ');
+                        specialInterest = specialInterest[1];
+                        if (!specialInterest){
+                            specialInterest = '';
+                        }
+                        
+                        var timesObj = {
+                            day : times[0],
+                            start : times[3]+' '+times[4],
+                            end : times[6]+' '+times[7],
+                            type : times[10],
+                            specialInterest : specialInterest
+                        };
+                        
+                        //If the meeting has already been created, append the meeting times, else add the meeting and times.
+                        if (meetings[locationName]['meetings'].hasOwnProperty(meetingName)) {
+                            meetings[locationName]['meetings'][meetingName]['times'].push(timesObj);
+                        } else {
+                            meetings[locationName]['meetings'][meetingName] = {};
+                            meetings[locationName]['meetings'][meetingName]['times'] = [timesObj];
+                            meetings[locationName]['meetings'][meetingName]['details'] = detailsBox;
+    
+                        }
                     }
-                };
+                }
                 
                 //Call the geocode function
-               geocode(locationName, zipcode, addressObj)
+               geocode(locationName, zipcode, addressObj);
                 
                 //temp writeFile as not to use up all geocode requests
                 //fs.writeFileSync('data/AA-complete-data.json', JSON.stringify(meetings));
-            };
+            }
         });
     });
-};
+}
 
 
 
@@ -183,9 +186,9 @@ function geocode(name, zip, address){
             else {
                 var tamuGeo = JSON.parse(body);
                 //Extract the latitude and longitude
-                var lat = tamuGeo['OutputGeocodes'][0]['OutputGeocode']['Latitude']
-                var lon = tamuGeo['OutputGeocodes'][0]['OutputGeocode']['Longitude']
-                var matchScore = tamuGeo['OutputGeocodes'][0]['OutputGeocode']['MatchScore']
+                var lat = tamuGeo['OutputGeocodes'][0]['OutputGeocode']['Latitude'];
+                var lon = tamuGeo['OutputGeocodes'][0]['OutputGeocode']['Longitude'];
+                var matchScore = tamuGeo['OutputGeocodes'][0]['OutputGeocode']['MatchScore'];
                 
                 //Save a coords object to the meetings object
                 meetings[name]['address']['coords'] = {
@@ -195,8 +198,8 @@ function geocode(name, zip, address){
                 };
                 
                 if (matchScore < 100){
-                    var compare = matchScore + ',' + tamuGeo['InputAddress']['StreetAddress'] + ',' + tamuGeo['InputAddress']['City'] + ',' + tamuGeo['InputAddress']['State'] + ',' + tamuGeo['InputAddress']['Zip']
-                    compare += ',"' + name + '",' + address.line_1 + ',' + address.state + ',' + zip
+                    var compare = matchScore + ',' + tamuGeo['InputAddress']['StreetAddress'] + ',' + tamuGeo['InputAddress']['City'] + ',' + tamuGeo['InputAddress']['State'] + ',' + tamuGeo['InputAddress']['Zip'];
+                    compare += ',"' + name + '",' + address.line_1 + ',' + address.state + ',' + zip;
                     fs.appendFileSync('data/less-than-perfect.csv', compare + '\n' );
                 }
                 
