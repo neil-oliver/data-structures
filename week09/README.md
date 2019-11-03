@@ -2,7 +2,7 @@
 
 Task instructions provided by [Aaron Hill](https://github.com/aaronxhill).
 
-Full instructions for this tasks can be found on the Parsons MSDV [Data Structures GitHub Page](https://github.com/visualizedata/data-structures/blob/master/weekly_assignment_09.md)
+Full instructions for this tasks can be found on the Parsons MSDV [Data Structures GitHub Page](https://github.com/visualizedata/data-structures/tree/master/weekly_assignment_09)
 
 ## Changes to Sample Code
 
@@ -73,7 +73,7 @@ ecosystem.config.js
 ```
 
 ### getTempData.js
-get all of the infromation being saved to the new database (for testing purposes).
+Get all of the infromation being saved to the new database (for testing purposes).
 #### Modified
 - Added the requirement to use the ENV package
 ```javascript
