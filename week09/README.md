@@ -7,7 +7,7 @@ Full instructions for this tasks can be found on the Parsons MSDV [Data Structur
 ## Changes to Sample Code
 
 ### setup.js
-Create new table in the new AWS RDS database setup foir this task (```temperature-db```)
+Create new table in the new AWS RDS database setup for this task (```temperature-db```)
 #### Original
 ```javascript
 var db_credentials = new Object();
