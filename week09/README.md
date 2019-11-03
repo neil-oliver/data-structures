@@ -79,4 +79,5 @@ Get all of the infromation being saved to the new database (for testing purposes
 ```javascript
 const dotenv = require('dotenv').config();
 ```
-
+#### Output
+![](https://github.com/neil-oliver/data-structures/blob/master/week09/tempdb-output.png)
