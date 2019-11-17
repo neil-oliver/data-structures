@@ -1,0 +1,16 @@
+<head>
+    <link rel='stylesheet' type='text/css' href='styles.css'/>
+</head>
+<h1>AA Meetings</h1>
+ <p><a href='/'>Go back to the menu</a></p>
+{{#meetings}}
+  <div class="entry">
+    <h1>{{extended_address}}</h1>
+    <div class="body">
+      {{group_name}}
+    </div>
+    <div class="body">
+      {{start_at}}
+    </div>
+  </div>
+ {{/meetings}}
