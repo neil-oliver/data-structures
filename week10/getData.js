@@ -57,7 +57,7 @@ app.get('/aa', async function (req, res) {
 });
 
 app.post('/aa', urlencodedParser, async function (req, res){
-    res.send(await aa(req.body.after,req.body.before));
+    res.send(await aa(req.body.after,req.body.before,req.body.day));
  });
  
  
