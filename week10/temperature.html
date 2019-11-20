@@ -3,6 +3,10 @@
 </head>
 <h1>It's Cold in Here!</h1>
  <p><a href='/'>Go back to the menu</a></p>
+ <form action="/temperature" method="POST">
+  <input type="radio" name="period" value="Week" checked>Week<br>
+  <input type="radio" name="period" value="Month">Month<br>
+  <input type="submit">
 {{#tempreading}}
   <ul>
     <li></li>{{sensortime}} : {{sensorvalue}}</li>

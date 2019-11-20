@@ -3,6 +3,22 @@
 </head>
 <h1>AA Meetings</h1>
  <p><a href='/'>Go back to the menu</a></p>
+ <form action="/aa" method="POST">
+  <select name="after">
+    <option value="4:00 PM">4:00 PM</option>
+    <option value="5:00 PM">5:00 PM</option>
+    <option value="6:00 PM">6:00 PM</option>
+    <option value="7:00 PM">7:00 PM</option>
+  </select>
+    <select name="before">
+      <option value="7:00 PM">7:00 PM</option>
+      <option value="8:00 PM">8:00 PM</option>
+      <option value="9:00 PM">9:00 PM</option>
+      <option value="10:00 PM">10:00 PM</option>
+  </select>
+  <br><br>
+    <input type="submit">
+</form>
 {{#meetings}}
   <div class="entry">
     <h1>{{extended_address}}</h1>
