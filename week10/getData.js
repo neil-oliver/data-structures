@@ -4,6 +4,7 @@ var app = express();
 var bodyParser = require('body-parser');
 var urlencodedParser = bodyParser.urlencoded({ extended: true });
 var moment = require('moment');
+//var bootstrap = require('bootstrap');
 
 // AWS Setup
 var AWS = require('aws-sdk');
@@ -98,6 +99,7 @@ function aa(after,before,day){
                 var template = handlebars.compile(data);
                 output.meetings = results.rows;
                 var html = template(output);
+                console.log(output)
                 resolve(html);
             });
             client.end();
