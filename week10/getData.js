@@ -5,6 +5,10 @@ var bodyParser = require('body-parser');
 var urlencodedParser = bodyParser.urlencoded({ extended: true });
 var moment = require('moment');
 
+// Request for TAMU service
+var request = require('request');
+
+
 // AWS Setup
 var AWS = require('aws-sdk');
 AWS.config = new AWS.Config();
@@ -85,6 +89,36 @@ function aa(after,before,day){
         // Connect to the AWS RDS Postgres database
         const client = new Client(db_credentials);
         client.connect();
+        
+        var lat = 0;
+        var lon = 0;
+        var address_line_1 = '60 W 90th Street';
+        var zip = '10024';
+
+        if (address_line_1 != '' && zip != '') {
+            var apiRequest = 'https://geoservices.tamu.edu/Services/Geocode/WebService/GeocoderWebServiceHttpNonParsed_V04_01.aspx?';
+            apiRequest += 'streetAddress=' + address_line_1.split(' ').join('%20');
+            apiRequest += '&city=New%20York&state=NY&zip=' + zip + '&apikey=' + apiKey;
+            apiRequest += '&format=json&version=4.01';
+            
+            request(apiRequest, function(err, resp, body) {
+                if (err) {throw err;}
+                else {
+                    var tamuGeo = JSON.parse(body);
+                    //Extract the latitude and longitude
+                    var lat = tamuGeo['OutputGeocodes'][0]['OutputGeocode']['Latitude'];
+                    var lon = tamuGeo['OutputGeocodes'][0]['OutputGeocode']['Longitude'];
+                    var locationQuery = "SELECT locations.Extended_Address, groups.Group_Name, events.Start_at ";
+                    locationQuery += ", 2 * 3961 * asin(sqrt((sin(radians((" + lat + " - locations.lat) / 2))) ^ 2 + cos(radians(locations.lat)) * cos(radians(" + lat + ")) * (sin(radians((" + lon + " - locations.long) / 2))) ^ 2)) as distance ";
+                    locationQuery +=  "FROM groups ";
+                    locationQuery +=  "INNER JOIN locations ON groups.Location_ID=locations.Location_ID ";
+                    locationQuery +=  "INNER JOIN events ON groups.Group_ID=events.Group_ID ";
+                    locationQuery +=  "WHERE events.Day = 'Mondays' AND events.Start_at BETWEEN time "+ after + " AND time " + before;
+                    locationQuery += " ORDER BY distance";
+                    locationQuery +=  ";";
+                }
+            });
+        }
     
         
         var thisQuery = "SELECT locations.lat, locations.long, locations.Extended_Address, groups.Group_Name, events.Start_at ";
@@ -138,7 +172,18 @@ function temperature(period){
         client.connect();
         
         // Sample SQL statements for checking your work: 
-        //var thisQuery = "SELECT * FROM sensorData;"; // print all values
+        
+        var averageQuery = `WITH newSensorData as (SELECT sensorTime - INTERVAL '5 hours' as adjSensorTime, * FROM sensorData)
+            SELECT
+            EXTRACT (MONTH FROM adjSensorTime) as sensorMonth, 
+            EXTRACT (DAY FROM adjSensorTime) as sensorDay,
+            EXTRACT (HOUR FROM adjSensorTime) as sensorHour, 
+            AVG(sensorValue::int) as temp_value
+            FROM newSensorData
+            WHERE sensortime BETWEEN timestamp '${start}' AND timestamp '${end}'
+            GROUP BY sensorMonth, sensorDay, sensorHour
+            ORDER BY sensorMonth, sensorDay, sensorHour;`;
+
         var thisQuery = "SELECT * FROM sensorData ";
         thisQuery +=  "WHERE sensortime BETWEEN timestamp '"+ start + "' AND timestamp '" + end;
         thisQuery +=  "';";
@@ -151,6 +196,7 @@ function temperature(period){
                     var template = handlebars.compile(data);
                     output.tempreading = results.rows;
                     var html = template(output);
+                    console.log(results.rows)
                     resolve(results.rows)
                     //resolve(html);
                 });

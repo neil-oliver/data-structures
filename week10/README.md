@@ -75,11 +75,43 @@ function getResults(){
 
 ## Queries
 ### AA
-The AA query allows the infomation to be filtered by Day, Start & End time. The default values are the current day and start time until the end of the day. 
+The AA query allows the infomation to be filtered by Day, Start & End time. The default values are the current day and start time until the end of the day.
+An additional query can be used to sort the results by promimity to a user given location.
 ```javascript
 after = after || moment().format('LT');
 before = before || "11:59 PM";
 day = day || moment().format('dddd') + 's'; 
+
+// optional query for use with location based sorting.
+var lat = 0;
+var lon = 0;
+var address_line_1 = '60 W 90th Street';
+var zip = '10024';
+
+if (address_line_1 != '' && zip != '') {
+    var apiRequest = 'https://geoservices.tamu.edu/Services/Geocode/WebService/GeocoderWebServiceHttpNonParsed_V04_01.aspx?';
+    apiRequest += 'streetAddress=' + address_line_1.split(' ').join('%20');
+    apiRequest += '&city=New%20York&state=NY&zip=' + zip + '&apikey=' + apiKey;
+    apiRequest += '&format=json&version=4.01';
+    
+    request(apiRequest, function(err, resp, body) {
+        if (err) {throw err;}
+        else {
+            var tamuGeo = JSON.parse(body);
+            //Extract the latitude and longitude
+            var lat = tamuGeo['OutputGeocodes'][0]['OutputGeocode']['Latitude'];
+            var lon = tamuGeo['OutputGeocodes'][0]['OutputGeocode']['Longitude'];
+            var locationQuery = "SELECT locations.Extended_Address, groups.Group_Name, events.Start_at ";
+            locationQuery += ", 2 * 3961 * asin(sqrt((sin(radians((" + lat + " - locations.lat) / 2))) ^ 2 + cos(radians(locations.lat)) * cos(radians(" + lat + ")) * (sin(radians((" + lon + " - locations.long) / 2))) ^ 2)) as distance ";
+            locationQuery +=  "FROM groups ";
+            locationQuery +=  "INNER JOIN locations ON groups.Location_ID=locations.Location_ID ";
+            locationQuery +=  "INNER JOIN events ON groups.Group_ID=events.Group_ID ";
+            locationQuery +=  "WHERE events.Day = 'Mondays' AND events.Start_at BETWEEN time "+ after + " AND time " + before;
+            locationQuery += " ORDER BY distance";
+            locationQuery +=  ";";
+        }
+    });
+}
 
 var thisQuery = "SELECT locations.lat, locations.long, locations.Extended_Address, groups.Group_Name, events.Start_at ";
 thisQuery +=  "FROM groups ";
@@ -137,7 +169,9 @@ dynamodb.query(params, function(err, data) {
 ```
 
 ### Temperature Sensor
-The temperature sensor query requests all of the information from either the previous week (7 days) or previous 30 days. The default value is set to the previous 30 days. 
+The temperature sensor query requests all of the information from either the previous week (7 days) or previous 30 days. The default value is set to the previous 30 days.
+Two querys are available to be able to switch from using every data point to the average of each hour.
+
 ```javascript
 period = period || 'Month'
 
@@ -149,6 +183,18 @@ if (period == 'Month'){
 } else {
     start = moment(end).subtract(7, 'days').format();
 }
+
+//use this query results to be average of each hour.
+var averageQuery = `WITH newSensorData as (SELECT sensorTime - INTERVAL '5 hours' as adjSensorTime, * FROM sensorData)
+SELECT
+EXTRACT (MONTH FROM adjSensorTime) as sensorMonth, 
+EXTRACT (DAY FROM adjSensorTime) as sensorDay,
+EXTRACT (HOUR FROM adjSensorTime) as sensorHour, 
+AVG(sensorValue::int) as temp_value
+FROM newSensorData
+WHERE sensortime BETWEEN timestamp '${start}' AND timestamp '${end}'
+GROUP BY sensorMonth, sensorDay, sensorHour
+ORDER BY sensorMonth, sensorDay, sensorHour;`;
         
 var thisQuery = "SELECT * FROM sensorData ";
 thisQuery +=  "WHERE sensortime BETWEEN timestamp '"+ start + "' AND timestamp '" + end;
