@@ -1,6 +1,7 @@
 # Weekly Assignment 11
 
 ## AA
+![](./AA.png)
 *What will the visualization look like? Will it be interactive? If so, how?*
 - Large map of manhattan
 - Mapbox [Light/Dark theme](https://www.mapbox.com/maps/light-dark/) (switching at night) 
@@ -25,6 +26,7 @@
   
   
 ## Process Blog
+![](./Progress_Blog.png)
 *What will the visualization look like? Will it be interactive? If so, how?*  
 - Title and short introduction at the top
 - Links on the right hand side for category, time periods (month / week)
@@ -46,6 +48,7 @@
 
   
 ## Temperature Sensor
+![](./Temperature.png)
 *What will the visualization look like? Will it be interactive? If so, how?*
 - Introduction to the project and the New York City heat laws.
 - Line graph showing the temperature from the sensor & external temperature data provided by the [National Digital Forecast Database](https://www.nws.noaa.gov/mdl/survey/pgb_survey/dev/rest.php).
