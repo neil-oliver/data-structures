@@ -4,7 +4,6 @@ var app = express();
 var bodyParser = require('body-parser');
 var urlencodedParser = bodyParser.urlencoded({ extended: true });
 var moment = require('moment');
-//var bootstrap = require('bootstrap');
 
 // AWS Setup
 var AWS = require('aws-sdk');
@@ -33,42 +32,45 @@ app.use(express.static('public'));
 
 ////////////////////////////////////////////////////////////////////////////////
 app.get('/blog', async function (req, res) {
-    res.send(await processBlog());
+    if (req.query == {}){
+        res.send(await processBlog());
+    } else {
+        res.send(await processBlog(req.query.start,req.query.end));
+    }
 });
 
-app.post('/blog', urlencodedParser, async function (req, res){
-    res.send(await processBlog(req.body.start,req.body.end));
- });
 
 
 ////////////////////////////////////////////////////////////////////////////////
 app.get('/temperature', async function (req, res) {
-    res.send(await temperature());
+    if (req.query == {}){
+        res.send(await temperature());
+    } else {
+        res.send(await temperature(req.query.period));
+    }
 });
 
-app.post('/temperature', urlencodedParser, async function (req, res) {
-    res.send(await temperature(req.body.period));
-});
 
 
 ////////////////////////////////////////////////////////////////////////////////
 
 app.get('/aa', async function (req, res) {
-    res.send(await aa());
+    if (req.query == {}){
+        res.send(await aa());
+    } else {
+        res.send(await aa(req.query.after,req.query.before,req.query.day));
+    }
 });
 
-app.post('/aa', urlencodedParser, async function (req, res){
-    res.send(await aa(req.body.after,req.body.before,req.body.day));
- });
- 
  
 ////////////////////////////////////////////////////////////////////////////////
 function aa(after,before,day){
     return new Promise(resolve => {
     
-        after = after || "6:00 PM";
-        before = before || "8:00 PM";
-        day = day || "Mondays"
+        after = after || moment().format('LT');
+        before = before || "11:59 PM";
+        day = day || moment().format('dddd') + 's'; 
+
         
         var output = {};
         
@@ -85,7 +87,7 @@ function aa(after,before,day){
         client.connect();
     
         
-        var thisQuery = "SELECT locations.Extended_Address, groups.Group_Name, events.Start_at ";
+        var thisQuery = "SELECT locations.lat, locations.long, locations.Extended_Address, groups.Group_Name, events.Start_at ";
         thisQuery +=  "FROM groups ";
         thisQuery +=  "INNER JOIN locations ON groups.Location_ID=locations.Location_ID ";
         thisQuery +=  "INNER JOIN events ON groups.Group_ID=events.Group_ID ";
@@ -95,12 +97,11 @@ function aa(after,before,day){
     
         client.query(thisQuery, async (err, results) => {
             if(err){throw err}
-            await fs.readFile('./aa.html', 'utf8', (error, data) => {
+            await fs.readFile('./aa-handlebars.html', 'utf8', (error, data) => {
                 var template = handlebars.compile(data);
                 output.meetings = results.rows;
                 var html = template(output);
-                console.log(output)
-                resolve(html);
+                resolve([html,results.rows]);
             });
             client.end();
         });
@@ -146,11 +147,12 @@ function temperature(period){
             if (err) {
                 console.log(err);
             } else {
-                await fs.readFile('./temperature.html', 'utf8', (error, data) => {
+                await fs.readFile('./temperature-handlebars.html', 'utf8', (error, data) => {
                     var template = handlebars.compile(data);
                     output.tempreading = results.rows;
                     var html = template(output);
-                    resolve(html);
+                    resolve(results.rows)
+                    //resolve(html);
                 });
             }
         });
@@ -163,8 +165,8 @@ function temperature(period){
     return new Promise(resolve => {
         var output = {};
 
-        minDate = minDate || "August 20, 2018";
-        maxDate = maxDate || "October 11, 2020";
+        minDate = minDate || "September 1, 2019";
+        maxDate = maxDate || moment().format('ll');
 
         output.blogpost = [];
         //what do i want?
@@ -190,7 +192,7 @@ function temperature(period){
                     output.blogpost.push({'title':item.title.S, 'body':item.content.S});
                 });
     
-                fs.readFile('./blog.html', 'utf8', (error, data) => {
+                fs.readFile('./blog-handlebars.html', 'utf8', (error, data) => {
                     var template = handlebars.compile(data);
                     var html = template(output);
                     resolve(html);
