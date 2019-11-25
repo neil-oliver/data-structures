@@ -47,20 +47,23 @@ English speaking user within close proximity / familiarity with New York.
 - Selection for custom time period on the side.
 - Most recent blog for the selected category or time period is large at the top with additional stories smaller with a summary underneath.
 - Clicking on one of the 'smaller' posts will exand the layout so that the full post can be read. 
+Additional pages will not have the introduction and large banner heading and all blog posts will be displayed in full.
 
 #### How will the data need to be mapped to the visual elements? 
 - text based representation. 
 - emoji replacement of text based emotions ( ;) )
-- 
+- Drop down menus for sleection of time periods and categories.
+
 #### For that mapping, what needs to be done to the data? Be specific and clear. Will it require filtering, aggregation, restructuring, and/or something else? How will this be done?  
 - Filtering on time & category
 - Sort by date / time
+- results limit per page - either 4 (1 large 3 small) or 7 (one large 6 small) on the front page.
 
 #### What is the default view (if any)?
-- Latest blog post
+- Latest blog post from any category. Smaller blog posts are from all categories.
 
 #### What assumptions are you making about the user?
-- None
+- English speaking user
 
   
 ## Temperature Sensor
