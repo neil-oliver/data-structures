@@ -5,6 +5,8 @@ Full instructions for this tasks can be found on the Parsons MSDV [Data Structur
 
 A description of the technical implementation of the design aspects (discussed below) can be found in the [Week 10](https://github.com/neil-oliver/data-structures/tree/master/week10) folder.
 
+The front end design for all three projects will be implemented using [Bootstrap](https://getbootstrap.com) to assist with form components and responsive design.
+
 ## AA
 ![](./AA.png)
 #### What will the visualization look like? Will it be interactive? If so, how?
@@ -63,7 +65,8 @@ Additional pages will not have the introduction and large banner heading and all
 - Latest blog post from any category. Smaller blog posts are from all categories.
 
 #### What assumptions are you making about the user?
-- English speaking user
+- English speaking user.
+- No requirement to have prior knowledge of the course.
 
   
 ## Temperature Sensor
@@ -71,17 +74,22 @@ Additional pages will not have the introduction and large banner heading and all
 #### What will the visualization look like? Will it be interactive? If so, how?
 - Introduction to the project and the New York City heat laws.
 - Line graph showing the temperature from the sensor & external temperature data provided by the [National Digital Forecast Database](https://www.nws.noaa.gov/mdl/survey/pgb_survey/dev/rest.php).
+- Image and explanation of the process of creating the proton sensor and where it is located in order to collect the data.
+- Tool tip to show details when hovering over data points on the graph. 
 
 #### How will the data need to be mapped to the visual elements? 
+- Both internal and external temperature mapped on the same graph.
 - X axis = Time, Y axis = Temperature.
 - Line at 50 degrees fahrenheit.
 - Color change below 50 degrees.
 
-#### For that mapping, what needs to be done to the data? Be specific and clear. Will it require filtering, aggregation, restructuring, and/or something else? How will this be done?  
-- Changeable time period to daily (external data only available on an hourly database).
+#### For that mapping, what needs to be done to the data? Be specific and clear. Will it require filtering, aggregation, restructuring, and/or something else? How will this be done?
+- Data from the sensor needs to be averaged to per hour due to the National Digital Forecast Database data only being available per hour.
+- Changeable time period from one month to one week. Graph will change based on filtering the data client side so that additional database calls are not needed.
+- Ability to see avergage temperatures for each day instead of per hour.
 
 #### What is the default view (if any)?
-- Graph showing average temperature (each day) for the past 30 days.
+- Graph showing every data point recorded over the past 30 days.
 
 #### What assumptions are you making about the user?
-- They understand fahrenheit!
+- They understand fahrenheit! (details of the coversion could be included in the description).
