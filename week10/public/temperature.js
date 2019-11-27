@@ -11,7 +11,6 @@ function getResults(val){
     $.get( '/temperature',parameters, function(d) {
         $('#tempreadings').html(d)
         data = d;
-        console.log(data)
         draw();
     });
 }
@@ -41,11 +40,42 @@ var svg = d3.select("#my_dataviz")
 function draw(){
     svg.selectAll('*').remove()
     
-    var parseDate = d3.utcParse("%Y-%m-%dT%H:%M:%S.%LZ")
+    var formatter;
+    var parser;
+
+    var parseDate = d3.timeParse("%Y-%m-%dT%H:%M:%S.%LZ")
+    var dateFormat = d3.timeFormat("%Y-%m-%d");
+    var parseDay = d3.timeParse("%Y-%m-%d");
+
+
+    console.log(data)
+
+    if ($('#gridCheck').is(":checked") == true ){
+      formatter = d3.timeFormat("%Y-%m-%d");
+      parser = d3.timeParse("%Y-%m-%d")
+      
+      data = d3.nest()
+        .key(function(d) { return formatter(parseDate(d.sensortime));})
+          .rollup(function(d) { 
+          return d3.mean(d, function(g) {return g.sensorvalue; });
+      }).entries(data);
+    } else {
+      formatter = d3.timeFormat("%Y-%m-%dT%H:%M:%S.%LZ");
+      parser = d3.timeParse("%Y-%m-%dT%H:%M:%S.%LZ")
+      
+      data = d3.nest()
+        .key(function(d) { return formatter(parseDate(d.sensortime));})
+          .rollup(function(d) { 
+          return d3.mean(d, function(g) {return g.sensorvalue; });
+      }).entries(data);
+    }
     
+    console.log(data)
+
     // Add X axis --> it is a date format
     var x = d3.scaleTime()
-      .domain(d3.extent(data, function(d) { return parseDate(d.sensortime); }))
+      .domain(d3.extent(data, function(d) { 
+      return parser(d.key); }))
       .range([ 0, width ]);
     svg.append("g")
       .attr("transform", "translate(0," + height + ")")
@@ -53,7 +83,7 @@ function draw(){
 
     // Add Y axis
     var y = d3.scaleLinear()
-      .domain([0, d3.max(data, function(d) { return +d.sensorvalue; })])
+      .domain([0, d3.max(data, function(d) { return +d.value; })])
       .range([ height, 0 ]);
     svg.append("g")
       .call(d3.axisLeft(y));
@@ -65,10 +95,10 @@ function draw(){
       .attr("stroke", "steelblue")
       .attr("stroke-width", 1.5)
       .attr("d", d3.line()
-        .x(function(d) { return x(parseDate(d.sensortime)) })
-        .y(function(d) { return y(d.sensorvalue) })
+        .x(function(d) { return x(parser(d.key)) })
+        .y(function(d) { return y(d.value) })
         .curve(d3.curveMonotoneX)
-        )
+      )
         
 
 }

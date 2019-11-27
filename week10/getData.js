@@ -5,8 +5,9 @@ var bodyParser = require('body-parser');
 var urlencodedParser = bodyParser.urlencoded({ extended: true });
 var moment = require('moment');
 
-// Request for TAMU service
+//TAMU service
 var request = require('request');
+const apiKey = process.env.TAMU_KEY;
 
 
 // AWS Setup
@@ -196,7 +197,6 @@ function temperature(period){
                     var template = handlebars.compile(data);
                     output.tempreading = results.rows;
                     var html = template(output);
-                    console.log(results.rows)
                     resolve(results.rows)
                     //resolve(html);
                 });
