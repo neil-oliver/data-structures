@@ -8,9 +8,13 @@
       <h1>It's Cold in Here!</h1>
       <p><a href='/'>Go back to the menu</a></p>
     </div>
-    <div class="btn-group" role="group" aria-label="timeperiod">
-      <button type="button" class="btn btn-secondary" value="Week">Week</button>
-      <button type="button" class="btn btn-secondary" value="Month">Month</button>
+    <div class="btn-group btn-group-toggle" data-toggle="buttons">
+      <label class="btn btn-secondary active"id="Month">
+        <input type="radio" name="Month"> Month
+      </label>
+      <label class="btn btn-secondary" id="Week">
+        <input type="radio" name="Week"> Week
+      </label>
     </div>
     <div class="form-check">
       <input class="form-check-input" type="checkbox" id="gridCheck">
@@ -22,6 +26,11 @@
 <script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+<script src="https://d3js.org/d3-color.v1.min.js"></script>
+<script src="https://d3js.org/d3-interpolate.v1.min.js"></script>
+<script src="https://d3js.org/d3-scale-chromatic.v1.min.js"></script>
 <script src="https://d3js.org/d3.v4.js"></script>
+<script src="moment.min.js"></script>
+
 <script src="temperature.js"></script>
 </body>
