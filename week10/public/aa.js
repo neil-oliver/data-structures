@@ -16,7 +16,7 @@ $(function(){
 });
 
 function getResults(){
-    var parameters = { day: $('select[name="day"]').val(), after: $('select[name="after"]').val(), before: $('select[name="before"]').val() };
+    var parameters = { day: $('select[name="day"]').val(), after: $('select[name="after"]').val(), before: $('select[name="before"]').val(), address: $('#inputAddress').val(), zip: $('#inputZip').val() };
     $.get( '/aa',parameters, function(data) {
         $('#meetings').html(data[0])
         
@@ -25,7 +25,11 @@ function getResults(){
         markers.clearLayers();
         
         for (var i=0; i<data[1].length; i++) {
-            L.marker( [data[1][i].lat, data[1][i].long] ).bindPopup(data[1][i].extended_address).addTo(markers);
+            var popupText = `<h1>${data[1][i].extended_address}</h1>`
+            for (x in data[1][i].meeting){
+                popupText += `<h2>${data[1][i].meeting[x].group}</h2>Start: ${data[1][i].meeting[x].start}<br>End: ${data[1][i].meeting[x].end}<br>`
+            }
+            L.marker( [data[1][i].lat, data[1][i].long] ).bindPopup(popupText).addTo(markers);
         }
     });
 }

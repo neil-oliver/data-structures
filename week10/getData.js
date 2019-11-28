@@ -40,7 +40,7 @@ app.get('/blog', async function (req, res) {
     if (req.query == {}){
         res.send(await processBlog());
     } else {
-        res.send(await processBlog(req.query.start,req.query.end));
+        res.send(await processBlog(req.query.start,req.query.end,req.query.category));
     }
 });
 
@@ -63,13 +63,13 @@ app.get('/aa', async function (req, res) {
     if (req.query == {}){
         res.send(await aa());
     } else {
-        res.send(await aa(req.query.after,req.query.before,req.query.day));
+        res.send(await aa(req.query.after,req.query.before,req.query.day,req.query.address,req.query.zip));
     }
 });
 
  
 ////////////////////////////////////////////////////////////////////////////////
-function aa(after,before,day){
+function aa(after,before,day, address, zip){
     return new Promise(resolve => {
     
         after = after || moment().format('LT');
@@ -93,56 +93,70 @@ function aa(after,before,day){
         
         var lat = 0;
         var lon = 0;
-        var address_line_1 = '60 W 90th Street';
-        var zip = '10024';
+        
+        var thisQuery;
 
-        if (address_line_1 != '' && zip != '') {
+        if (address && zip) {
             var apiRequest = 'https://geoservices.tamu.edu/Services/Geocode/WebService/GeocoderWebServiceHttpNonParsed_V04_01.aspx?';
-            apiRequest += 'streetAddress=' + address_line_1.split(' ').join('%20');
+            apiRequest += 'streetAddress=' + address.split(' ').join('%20');
             apiRequest += '&city=New%20York&state=NY&zip=' + zip + '&apikey=' + apiKey;
             apiRequest += '&format=json&version=4.01';
             
-            request(apiRequest, function(err, resp, body) {
+            request(apiRequest, async function(err, resp, body) {
                 if (err) {throw err;}
                 else {
                     var tamuGeo = JSON.parse(body);
+                    console.log(tamuGeo)
+                    
                     //Extract the latitude and longitude
                     var lat = tamuGeo['OutputGeocodes'][0]['OutputGeocode']['Latitude'];
                     var lon = tamuGeo['OutputGeocodes'][0]['OutputGeocode']['Longitude'];
-                    var locationQuery = "SELECT locations.Extended_Address, groups.Group_Name, events.Start_at ";
-                    locationQuery += ", 2 * 3961 * asin(sqrt((sin(radians((" + lat + " - locations.lat) / 2))) ^ 2 + cos(radians(locations.lat)) * cos(radians(" + lat + ")) * (sin(radians((" + lon + " - locations.long) / 2))) ^ 2)) as distance ";
-                    locationQuery +=  "FROM groups ";
-                    locationQuery +=  "INNER JOIN locations ON groups.Location_ID=locations.Location_ID ";
-                    locationQuery +=  "INNER JOIN events ON groups.Group_ID=events.Group_ID ";
-                    locationQuery +=  "WHERE events.Day = 'Mondays' AND events.Start_at BETWEEN time "+ after + " AND time " + before;
-                    locationQuery += " ORDER BY distance";
-                    locationQuery +=  ";";
-                }
+                    
+                    thisQuery = "SELECT locations.lat, locations.long, locations.Extended_Address, json_agg(json_build_object('group', groups.Group_Name, 'start', events.Start_at, 'end', events.End_at)) as meeting ";
+                    thisQuery += ", 2 * 3961 * asin(sqrt((sin(radians((" + lat + " - locations.lat) / 2))) ^ 2 + cos(radians(locations.lat)) * cos(radians(" + lat + ")) * (sin(radians((" + lon + " - locations.long) / 2))) ^ 2)) as distance ";
+                    thisQuery +=  "FROM groups ";
+                    thisQuery +=  "INNER JOIN locations ON groups.Location_ID=locations.Location_ID ";
+                    thisQuery +=  "INNER JOIN events ON groups.Group_ID=events.Group_ID ";
+                    thisQuery +=  "WHERE events.Day = 'Mondays' AND events.Start_at BETWEEN time '"+ after + "' AND time '" + before + "' ";
+                    thisQuery += "GROUP BY locations.lat, locations.long, locations.Extended_Address "
+                    thisQuery += " ORDER BY distance";
+                    thisQuery +=  ";";
+                    
+                    client.query(thisQuery, async (err, results) => {
+                        if(err){throw err}
+                        await fs.readFile('./aa-handlebars.html', 'utf8', (error, data) => {
+                            var template = handlebars.compile(data);
+                            output.meetings = results.rows;
+                            var html = template(output);
+                            resolve([html,results.rows]);
+                        });
+                        client.end();
+                    })
+                };
+            });
+            
+        } else {
+    
+            thisQuery = "SELECT locations.lat, locations.long, locations.Extended_Address, json_agg(json_build_object('group', groups.Group_Name, 'start', events.Start_at, 'end', events.End_at)) as meeting ";
+            thisQuery +=  "FROM groups ";
+            thisQuery +=  "INNER JOIN locations ON groups.Location_ID=locations.Location_ID ";
+            thisQuery +=  "INNER JOIN events ON groups.Group_ID=events.Group_ID ";
+            thisQuery +=  "WHERE events.Day = '" + day +"' AND events.Start_at BETWEEN time '"+ after + "' AND time '" + before + "' ";
+            thisQuery += "GROUP BY locations.lat, locations.long, locations.Extended_Address"
+            thisQuery +=  ";";
+            
+            client.query(thisQuery, async (err, results) => {
+                if(err){throw err}
+                await fs.readFile('./aa-handlebars.html', 'utf8', (error, data) => {
+                    var template = handlebars.compile(data);
+                    output.meetings = results.rows;
+                    var html = template(output);
+                    resolve([html,results.rows]);
+                });
+                client.end();
             });
         }
-    
-        
-        var thisQuery = "SELECT locations.lat, locations.long, locations.Extended_Address, groups.Group_Name, events.Start_at ";
-        thisQuery +=  "FROM groups ";
-        thisQuery +=  "INNER JOIN locations ON groups.Location_ID=locations.Location_ID ";
-        thisQuery +=  "INNER JOIN events ON groups.Group_ID=events.Group_ID ";
-        thisQuery +=  "WHERE events.Day = '" + day +"' AND events.Start_at BETWEEN time '"+ after + "' AND time '" + before;
-        thisQuery +=  "';";
-        
-    
-        client.query(thisQuery, async (err, results) => {
-            if(err){throw err}
-            await fs.readFile('./aa-handlebars.html', 'utf8', (error, data) => {
-                var template = handlebars.compile(data);
-                output.meetings = results.rows;
-                var html = template(output);
-                resolve([html,results.rows]);
-            });
-            client.end();
-        });
-        
     });
-     
  }
 
 function temperature(period){
@@ -207,43 +221,81 @@ function temperature(period){
      
  }
  
- function processBlog(minDate, maxDate){
+ function processBlog(minDate, maxDate, category){
     return new Promise(resolve => {
         var output = {};
 
         minDate = minDate || "September 1, 2019";
         maxDate = maxDate || moment().format('ll');
+        category = category || 'all';
+
 
         output.blogpost = [];
-        //what do i want?
-        var params = {
-            TableName : "process-blog",
-            KeyConditionExpression: "category = :categoryName and created between :minDate and :maxDate", // the query expression
-            ExpressionAttributeValues: { // the query values
-                ":categoryName": {S: "data-structures"},
-                ":minDate": {S: new Date(minDate).toISOString()},
-                ":maxDate": {S: new Date(maxDate).toISOString()}
-            }
-        };
+
+        if (category != 'all'){
+            //what do i want?
+            var params = {
+                TableName : "process-blog",
+                KeyConditionExpression: "category = :categoryName and created between :minDate and :maxDate", // the query expression
+                ExpressionAttributeValues: { // the query values
+                    ":categoryName": {S: category},
+                    ":minDate": {S: new Date(minDate).toISOString()},
+                    ":maxDate": {S: new Date(maxDate).toISOString()}
+                }
+            };
+            
+            //go get it...
+            dynamodb.query(params, function(err, data) {
+                if (err) {
+                    console.error("Unable to query. Error:", JSON.stringify(err, null, 2));
+                } else {
+                    console.log("Query succeeded.");
+                    data.Items.forEach(function(item) {
+                        console.log("***** ***** ***** ***** ***** \n", item);
+                          // use express to create a page with that data
+                        output.blogpost.push({'title':item.title.S, 'content':item.content.S, 'category':item.category.S});
+                    });
         
-        //go get it...
-        dynamodb.query(params, function(err, data) {
-            if (err) {
-                console.error("Unable to query. Error:", JSON.stringify(err, null, 2));
-            } else {
-                console.log("Query succeeded.");
-                data.Items.forEach(function(item) {
-                    console.log("***** ***** ***** ***** ***** \n", item);
-                      // use express to create a page with that data
-                    output.blogpost.push({'title':item.title.S, 'body':item.content.S});
-                });
-    
-                fs.readFile('./blog-handlebars.html', 'utf8', (error, data) => {
-                    var template = handlebars.compile(data);
-                    var html = template(output);
-                    resolve(html);
-                });
-            }
-        });
+                    fs.readFile('./blog-handlebars.html', 'utf8', (error, data) => {
+                        var template = handlebars.compile(data);
+                        var html = template(output);
+                        resolve(html);
+                    });
+                }
+            });
+        } else {
+            var docClient = new AWS.DynamoDB.DocumentClient();
+
+            var params = {
+                TableName: "process-blog",
+                ProjectionExpression: "category, content, title"//,
+                // FilterExpression: "created between :minDate and :maxDate",
+                //  ExpressionAttributeValues: { // the query values
+                //     ":minDate": {S: new Date(minDate).toISOString()},
+                //     ":maxDate": {S: new Date(maxDate).toISOString()}
+                // }
+            };
+            
+            console.log("Scanning Blog DB.");
+            docClient.scan(params, function (err, data) {
+                if (err) {
+                    console.error("Unable to scan the table. Error JSON:", JSON.stringify(err, null, 2));
+                } else {
+                    // print all the movies
+                    console.log("Scan succeeded.");
+                    data.Items.forEach(function(item) {
+                        console.log("***** ***** ***** ***** ***** \n", item);
+                          // use express to create a page with that data
+                        output.blogpost.push({'title':item.title, 'content':item.content, 'category':item.category});
+                    });
+        
+                    fs.readFile('./blog-handlebars.html', 'utf8', (error, data) => {
+                        var template = handlebars.compile(data);
+                        var html = template(output);
+                        resolve(html);
+                    });
+                }
+            });
+        }
     });
  }
