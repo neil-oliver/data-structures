@@ -1,15 +1,20 @@
 const parseDate = d3.timeParse("%Y-%m-%dT%H:%M:%S.%LZ")
+
+// for the original unfiltered data
 var dbData;
 var data;
 
+// for filtered data
 var monthWeather;
 var weekWeather;
 var weatherData
 
+// start and end date settings
 var now = new Date().toISOString()
 var weekAgo = moment(now).subtract(7, 'days')
 var monthAgo = moment(now).subtract(30, 'days')
 
+//filter data by week on user select
 $(function(){
     $("input, label").on("click", function(){
       if ($(this).attr('id') == 'Week'){
@@ -32,17 +37,18 @@ $(function(){
     });
 });
 
-function getWeatherData(){
-    
 
-  var start = monthAgo.format('Y-M-D')
+function getWeatherData(){
   
+  var start = monthAgo.format('Y-M-D')
   var end = moment(now).format('Y-M-D')
   
+  // make a request to meteostat for historical weather data
   var baseURL = `https://api.meteostat.net/v1/history/hourly?station=72503&start=${start}&end=${end}&time_zone=America/New_York&time_format=Y-m-d%20H:i&key=qMMTpKxL`
 
   $.get(baseURL, function(dta){
     monthWeather = dta.data.map(function(d){
+      //make new object to match the database data and convert from celcius to fahrenheit 
       return {key:moment(d.time).toISOString(), value:d.temperature * 9 / 5 + 32}
     })
     weatherData = monthWeather
@@ -79,6 +85,9 @@ function init(){
 
 init()
 
+//////////////////////////////////////////////////////////////////////
+// D3!
+
 // set the dimensions and margins of the graph
 var margin = {top: 10, right: 30, bottom: 30, left: 60},
     width = (window.innerWidth*0.6) - margin.left - margin.right,
@@ -105,8 +114,9 @@ var colorScale = d3.scaleLinear()
 // example code from https://www.d3-graph-gallery.com/graph/line_basic.html
 function draw(){
     svg.selectAll('*').remove()
-    
-    // filter the data for average
+
+    /////////////////////////////////////////////////////////////////////////
+    // filter the data for daily average
     if ($('#gridCheck').is(":checked") == true ){
       
       formatter = d3.timeFormat("%Y-%m-%d");
@@ -131,6 +141,8 @@ function draw(){
       
     }
     
+    //////////////////////////////////////////////////////////////////////////
+
     // Add X axis --> it is a date format
     x = d3.scaleTime()
       .domain(d3.extent(data, function(d) { 
@@ -161,7 +173,6 @@ function draw(){
       .attr("stroke", 'red') 
 
 
-    
     // only draw the dots if it is on average view  
     if ($('#gridCheck').is(":checked") == true ){  
       svg.selectAll(".dot")

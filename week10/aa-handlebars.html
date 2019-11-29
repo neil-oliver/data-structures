@@ -1,12 +1,10 @@
 
 {{#meetings}}
-  <div class="entry">
+  <div class="location" data-latlon="{{lat}},{{long}}">
     <h1>{{extended_address}}</h1>
     {{#meeting}}
-    <div class="body">
+    <div class="meeting">
       <h3>{{group}}</h3>
-    </div>
-    <div class="body">
       Starting at: {{start}}<br>
       Ends at: {{end}}
     </div>

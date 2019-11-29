@@ -10,6 +10,12 @@ h2 {
     color : pink;
 }
 
+
+.postfocus {
+    width:50%;
+  transition: .5s ease-in-out;
+}
+
 /* The heart of the matter */
 .testimonial-group > .row {
   display: flex;
@@ -18,8 +24,11 @@ h2 {
 }
 .testimonial-group > .row > .col-xs-4 {
   flex: 0 0 auto;
-  width:25%;
   height: 60rem;
+  width:25%;
+  transition: .5s ease-in-out;
+
+
 }
 
 /* Decorations */
