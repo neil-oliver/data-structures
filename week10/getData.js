@@ -168,7 +168,7 @@ function temperature(period){
  function processBlog(minDate, maxDate, category){
     return new Promise(resolve => {
         var output = {};
-
+        
         minDate = minDate || "September 1, 2019";
         maxDate = maxDate || moment().format('ll');
         category = category || 'all';
@@ -215,7 +215,7 @@ function temperature(period){
                 data.Items.forEach(function(item) {
                     console.log("***** ***** ***** ***** ***** \n", item);
                       // use express to create a page with that data
-                    output.blogpost.push({'title':item.title.S, 'content':item.content.S, 'category':item.category.S});
+                    output.blogpost.push({'title':item.title.S, 'content':item.content.S, 'category':item.category.S,'created':moment(item.created.S).format('LL')});
                 });
     
                 fs.readFile('./blog-handlebars.html', 'utf8', (error, data) => {

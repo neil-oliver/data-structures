@@ -26,3 +26,11 @@ function init(){
 }
 
 init()
+
+//expand div width on click
+$("#blogpost").click(function() {
+    $('#blogpost *').removeAttr( 'style');
+    if ($(event.target).attr('class') == 'col-xs-4'){
+        $(event.target).attr( 'style','width:50%' )
+    }
+});
