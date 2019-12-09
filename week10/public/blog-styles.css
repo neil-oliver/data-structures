@@ -13,19 +13,28 @@ h3 {
     font-size: 1.1rem;
 }
 
+
 /* The heart of the matter */
 .testimonial-group > .row {
   display: flex;
   flex-wrap: nowrap;
   overflow-x: auto;
+height: 100%;
+
 }
 .testimonial-group > .row > .col-xs-4 {
   flex: 0 0 auto;
-  height: 60rem;
   width:25%;
-  transition: .5s ease-in-out;
+  transition: .2s ease-in-out;
+}
+.testimonial-group p {
+  visibility: hidden;
+  transition: .2s ease-in-out;
+}
 
-
+.testimonial-group a {
+  visibility: hidden;
+  transition: .2s ease-in-out;
 }
 
 /* Decorations */
@@ -39,4 +48,15 @@ h3 {
 .post{
     margin: 2rem;
     font-size: 1rem;
+}
+
+.focuspost{
+    width:50% !important;
+}
+
+.focuspost p{
+    visibility: visible !important;
+}
+.focuspost a{
+    visibility: visible !important;
 }

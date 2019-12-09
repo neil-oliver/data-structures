@@ -12,7 +12,7 @@ var dynamodb = new AWS.DynamoDB();
 
 //constructor class for a blog post entry
 class BlogEntry {
-  constructor(category, created, title, author, content, published, tags, images, emotion, activity, food) {
+  constructor(category, created, title, author, content,  link, published, tags, images, emotion, activity, food) {
     this.category = {}; // Partition Key
     this.category.S = category;
     this.created = {}; // Sort Key
@@ -25,6 +25,7 @@ class BlogEntry {
     this.author.S = author;
     this.content = {};
     this.content.S = content;
+    this.link.S = link;
     this.published = {};
     if (published == 'on'){
       this.published.BOOL = true;

@@ -34,6 +34,7 @@ $(function(){
         sortWeatherData('Month')
       }
       draw()
+      drawDots()
     });
 });
 
@@ -52,7 +53,11 @@ function getWeatherData(){
       return {key:moment(d.time).toISOString(), value:d.temperature * 9 / 5 + 32}
     })
     weatherData = monthWeather
-    drawWeather()
+    //drawWeather()
+    draw();
+    drawDots()
+
+
   });
 }
 
@@ -71,10 +76,8 @@ function sortWeatherData(period){
 function getResults(val){
     var parameters = { period: val };
     $.get( '/temperature',parameters, function(d) {
-        $('#tempreadings').html(d)
         dbData = d;
         data = d;
-        draw();
     });
 }
 
@@ -85,152 +88,354 @@ function init(){
 
 init()
 
-//////////////////////////////////////////////////////////////////////
-// D3!
 
-// set the dimensions and margins of the graph
-var margin = {top: 10, right: 30, bottom: 30, left: 60},
-    width = (window.innerWidth*0.6) - margin.left - margin.right,
-    height = 600 - margin.top - margin.bottom;
+var margin = {top: 20, right: 10, bottom: 20, left: 10};
+
+var width = 1000 - margin.left - margin.right,
+	height = 1000 - margin.top - margin.bottom;
 
 // append the svg object to the body of the page
-var svg = d3.select("#my_dataviz")
-  .append("svg")
-    .attr("width", width + margin.left + margin.right)
-    .attr("height", height + margin.top + margin.bottom)
-  .append("g")
-    .attr("transform",
-          "translate(" + margin.left + "," + margin.top + ")");
-
-var x;
-var y;
+var svg = d3.select("#my_dataviz").append("svg")
+    	.attr("width", width + margin.left + margin.right)
+      .attr("height", height + margin.top + margin.bottom)
+    .append("g")
+    	.attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+    
 var parser;
 var formatter;
 
 var colorScale = d3.scaleLinear()
   .domain([32, 80])
   .range([1, 0]);
-
-// example code from https://www.d3-graph-gallery.com/graph/line_basic.html
-function draw(){
-    svg.selectAll('*').remove()
-
-    /////////////////////////////////////////////////////////////////////////
-    // filter the data for daily average
-    if ($('#gridCheck').is(":checked") == true ){
-      
-      formatter = d3.timeFormat("%Y-%m-%d");
-      parser = d3.timeParse("%Y-%m-%d")
-      
-      data = d3.nest()
-        .key(function(d) { return formatter(parseDate(d.sensortime));})
-          .rollup(function(d) { 
-          return d3.mean(d, function(g) {return g.sensorvalue; });
-      }).entries(data);
-      
-    } else {
-      
-      formatter = d3.timeFormat("%Y-%m-%dT%H:%M:%S.%LZ");
-      parser = d3.timeParse("%Y-%m-%dT%H:%M:%S.%LZ")
-      
-      data = d3.nest()
-        .key(function(d) { return formatter(parseDate(d.sensortime));})
-          .rollup(function(d) { 
-          return d3.mean(d, function(g) {return g.sensorvalue; });
-      }).entries(data);
-      
-    }
     
-    //////////////////////////////////////////////////////////////////////////
+var innerRadius = 200,
+    outerRadius = Math.min(width, height) / 2 - 6;
 
-    // Add X axis --> it is a date format
-    x = d3.scaleTime()
-      .domain(d3.extent(data, function(d) { 
-      return parser(d.key); }))
-      .range([ 0, width ]);
-    svg.append("g")
-      .attr("transform", "translate(0," + height + ")")
-      .call(d3.axisBottom(x));
+var formatMonth = d3.timeFormat("%d %b");
 
-    // Add Y axis
-    y = d3.scaleLinear()
-      .domain([0, d3.max(data, function(d) { return +d.value; })])
-      .range([ height, 0 ]);
-    svg.append("g")
-      .call(d3.axisLeft(y));
-      
+var fullCircle = 2 * Math.PI;
 
-    // Add the line
-    svg.append("path")
-      .datum(data)
+var x = d3.scaleTime()
+    .range([0, fullCircle]);
+
+var y = d3.scaleRadial()
+		.range([innerRadius, outerRadius]);
+		
+function draw(){
+  svg.selectAll('*').remove()
+  
+  var g = svg.append("g")
+	  .attr("transform", "translate(" + width / 2 + "," + height / 2 + ")");
+  /////////////////////////////////////////////////////////////////////////
+  // filter the data for daily average
+  if ($('#gridCheck').is(":checked") == true ){
+    
+    formatter = d3.timeFormat("%Y-%m-%d");
+    parser = d3.timeParse("%Y-%m-%d")
+    
+    data = d3.nest()
+      .key(function(d) { return formatter(parseDate(d.sensortime));})
+        .rollup(function(d) { 
+        return d3.mean(d, function(g) {return g.sensorvalue; });
+    }).entries(data);
+    
+  } else {
+    
+    formatter = d3.timeFormat("%Y-%m-%dT%H:%M:%S.%LZ");
+    parser = d3.timeParse("%Y-%m-%dT%H:%M:%S.%LZ")
+    
+    data = d3.nest()
+      .key(function(d) { return formatter(parseDate(d.sensortime));})
+        .rollup(function(d) { 
+        return d3.mean(d, function(g) {return g.sensorvalue; });
+    }).entries(data);
+    
+  }
+
+  
+var line = d3.lineRadial()
+		.angle(function(d) { return x(parser(d.key)); })
+		.radius(function(d) { return y(d.value); })
+		.curve(d3.curveCardinal);
+
+  
+  //////////////////////////////////////////////////////////////////////////
+
+  x.domain(d3.extent(data, function(d) { return parser(d.key); }));
+	y.domain(d3.extent(data, function(d) { return d.value; }));
+  
+  var linePlot = g.append("path")
+  	.datum(data)
+    .attr("fill", "none")
+    .attr("stroke", "#FF007F")
+    .attr("stroke-width", 1)
+    .attr("d", line);
+  
+  var yAxis = g.append("g")
+      .attr("text-anchor", "middle");
+
+  var yTick = yAxis
+    .selectAll("g")
+    .data(y.ticks(5))
+    .enter().append("g");
+  
+  yTick.append("circle")
       .attr("fill", "none")
-      .attr("stroke-width", 1.5)
-      .attr("d", d3.line()
-        .x(function(d) { return x(parser(d.key)) })
-        .y(function(d) { return y(d.value) })
-        .curve(d3.curveMonotoneX)
-      )
-      .attr("stroke", 'red') 
+      .attr("stroke", "grey")
+  		.attr("opacity", 0.2)
+      .attr("r", y);
+  
+  yAxis.append("circle")
+  		.attr("fill", "none")
+      .attr("stroke", "grey")
+  		.attr("opacity", 0.2)
+      .attr("r", function() { return y(y.domain()[0])});
 
 
-    // only draw the dots if it is on average view  
-    if ($('#gridCheck').is(":checked") == true ){  
-      svg.selectAll(".dot")
+  yTick.append("text")
+    .attr("y", function(d) { return -y(d); })
+    .attr("dy", "0.35em")
+    .style("font-size", 10)
+    .text(function(d) { return d + "°F"; })
+    .style('fill', 'grey');
+
+  
+  var xAxis = g.append("g");
+
+  var xTick = xAxis
+    .selectAll("g")
+    .data(x.ticks(12))
+    .enter().append("g")
+      .attr("text-anchor", "middle")
+      .attr("transform", function(d) {
+        return "rotate(" + ((x(d)) * 180 / Math.PI - 90) + ")translate(" + innerRadius + ",0)";
+      });
+  
+  xTick.append("line")
+    .attr("x2", -5)
+    .attr("stroke", "grey");
+
+  xTick.append("text")
+    .attr("transform", function(d) { 
+    var angle = x(d);
+    return ((angle < Math.PI / 2) || (angle > (Math.PI * 3 / 2))) ? "rotate(90)translate(0,22)" : "rotate(-90)translate(0, -15)"; })
+    .text(function(d) { 
+      return formatMonth(d);
+    })
+  	.style("font-size", 10)
+  	.attr("opacity", 0.6)
+  	.style('fill', 'white');
+
+  
+  var title = g.append("g")
+  		.attr("class", "title")
+  		.append("text")
+  		.attr("dy", "-0.2em")
+  		.attr("text-anchor", "middle")
+  		.text("Temperature")
+  		.style("font-size", 30)
+  		.style('fill', 'white');
+
+  
+  var subtitle = g.append("text")
+  		.attr("dy", "1em")
+      .attr("text-anchor", "middle")
+  		.attr("opacity", 0.6)
+  		.text("New York")
+  		.style('fill', 'white');
+
+  setTimeout(function(){ 
+      
+      x.domain(d3.extent(data, function(d) { return parser(d.key); }));
+	    y.domain(d3.extent(data, function(d) { return d.value; }));
+    
+    var dots = g.selectAll(".dot")
       .data(data)
-      .enter().append("circle") // Uses the enter().append() method
+      .enter()
+        .append("circle") // Uses the enter().append() method
         .attr("class", "dot") // Assign a class for styling
-        .attr("cx", function(d) { return x(parser(d.key))})
+        .attr("transform", function(d) {
+          return "rotate(" + ((x(parser(d.key)))* 180 / Math.PI - 180) + ")";
+        })
         .attr("cy", function(d) { return y(d.value) })
-        .attr("r", 5)
-        .style("stroke", (d) => d3.interpolateRdYlBu(colorScale(d.value)))   // set the line colour
-        .style("fill", "white")   // set the fill colour 
+        .attr("r", 2)
+        .style("stroke", "#FF007F")   // set the line colour
+        .style("fill", "#FF007F")   // set the fill colour 
           .on("mouseover", function(a, b, c) { 
             this.attr('class', 'focus')
     		})
-    }
-    
-    drawWeather()
-
+    		.attr('opacity',0)
+    		.transition()
+          .duration(200)
+          .ease(d3.easeLinear)
+        .attr('opacity',1);
+  
+  }, 1500);
+		
+ 	
+  var lineLength = linePlot.node().getTotalLength();
+  
+  linePlot
+    .attr("stroke-dasharray", lineLength + " " + lineLength)
+    .attr("stroke-dashoffset", -lineLength)
+    .transition()
+      .duration(1500)
+      .ease(d3.easeLinear)
+      .attr("stroke-dashoffset", 0);
+      
+  drawWeather()
 }
 
 function drawWeather(){
   
+    var g = svg.append("g")
+	  .attr("transform", "translate(" + width / 2 + "," + height / 2 + ")");
+	  
     if ($('#gridCheck').is(":checked") == true ){
-      
-      formatter = d3.timeFormat("%Y-%m-%d");
-      parser = d3.timeParse("%Y-%m-%d")
-      
-      weatherData = d3.nest()
-        .key(function(d) { return formatter(parseDate(d.key));})
-          .rollup(function(d) { 
-          return d3.mean(d, function(g) {return g.value; });
-      }).entries(weatherData);
-    }
-      // Add the weather line
-    svg.append("path")
-      .datum(weatherData)
-      .attr("fill", "none")
-      .attr("stroke", 'blue')
-      .attr("stroke-width", 1.5)
-      .attr("d", d3.line()
-        .x(function(d) { return x(parser(d.key)) })
-        .y(function(d) { return y(d.value) })
-        .curve(d3.curveMonotoneX)
-      )
-      
-    // only draw the dots if it is on average view  
-    if ($('#gridCheck').is(":checked") == true ){  
-      svg.selectAll(".weatherDot")
+  
+    formatter = d3.timeFormat("%Y-%m-%d");
+    parser = d3.timeParse("%Y-%m-%d")
+  
+    weatherData = d3.nest()
+      .key(function(d) { return formatter(parseDate(d.key));})
+        .rollup(function(d) { 
+        return d3.mean(d, function(g) {return g.value; });
+    }).entries(weatherData);
+  }
+  
+  
+  var line = d3.lineRadial()
+  		.angle(function(d) { return x(parser(d.key)); })
+  		.radius(function(d) { return y(d.value); })
+  		.curve(d3.curveCardinal);
+
+  //////////////////////////////////////////////////////////////////////////
+
+  x.domain(d3.extent(weatherData, function(d) { return parser(d.key); }));
+	y.domain(d3.extent(weatherData, function(d) { return d.value; }));
+  
+  setTimeout(function(){
+    
+    x.domain(d3.extent(weatherData, function(d) { return parser(d.key); }));
+	  y.domain(d3.extent(weatherData, function(d) { return d.value; }));
+  
+    var dots = g.selectAll(".dot")
       .data(weatherData)
-      .enter().append("circle") // Uses the enter().append() method
+      .enter()
+        .append("circle") // Uses the enter().append() method
         .attr("class", "dot") // Assign a class for styling
-        .attr("cx", function(d) { return x(parser(d.key))})
+        .attr("transform", function(d) {
+          return "rotate(" + ((x(parser(d.key)))* 180 / Math.PI - 180) + ")";
+        })
         .attr("cy", function(d) { return y(d.value) })
-        .attr("r", 5)
-        .style("stroke", (d) => d3.interpolateRdYlBu(colorScale(d.value)))    // set the line colour
-        .style("fill", "white")   // set the fill colour 
+        .attr("r", 2)
+        .style("stroke", "#1E90FF")   // set the line colour
+        .style("fill", "#1E90FF")   // set the fill colour 
           .on("mouseover", function(a, b, c) { 
             this.attr('class', 'focus')
     		})
-    }
+    		.attr('opacity',0)
+    		.transition()
+          .duration(200)
+          .ease(d3.easeLinear)
+        .attr('opacity',1);
+
+  }, 1500);
+
+	
+  var linePlot = g.append("path")
+  	.datum(weatherData)
+    .attr("fill", "none")
+    .attr("stroke", "#1E90FF")
+    .attr("stroke-width", 1)
+    .attr("stroke-opacity", 0.7)
+    .attr("d", line);
+    
+  var lineLength = linePlot.node().getTotalLength();
+
+  linePlot
+  .attr("stroke-dasharray", lineLength + " " + lineLength)
+  .attr("stroke-dashoffset", -lineLength)
+  .transition()
+    .duration(1500)
+    .ease(d3.easeLinear)
+    .attr("stroke-dashoffset", 0);
+    
+}
+
+//////////////////////////////////////////////////////
+// The Dots
+var h = 1000;
+var w = 1000;
+
+var grid = d3.grid()
+  .size([800, 800]);
+
+//var color = d3.interpolateRdYlBu()
+
+var size = d3.scaleSqrt()
+  .domain([0, 9])
+  .range([0, 20]);
+
+var sortBy = {
+  id: d3.comparator()
+    .order(d3.ascending, function(d) { return d.id; }),
+  color: d3.comparator()
+    .order(d3.ascending, function(d) { return d.color; })
+    .order(d3.descending, function(d) { return d.size; })
+    .order(d3.ascending, function(d) { return d.id; }),
+  size: d3.comparator()
+    .order(d3.descending, function(d) { return d.size; })
+    .order(d3.ascending, function(d) { return d.color; })
+    .order(d3.ascending, function(d) { return d.id; })
+};
+  
+var svg2 = d3.select("#tempreadings").append("svg")
+  .attr("width", w)
+  .attr("height", h)
+  .append("g")
+  .attr("transform", "translate(100,100)")
+    
+    
+function drawDots(){
+
+  var data2 = data.map(function(d){
+        //make new object to match the database data and convert from celcius to fahrenheit 
+        return {id:d.key, size:1+colorScale(d.value)*9 , color: 1-colorScale(d.value) }
+      })
+  
+  // var data2 = d3.range(17).map(function(d) { 
+  //   return {
+  //     id: d,
+  //     size: 1 + Math.floor(Math.random() * 9),
+  //     color: Math.floor(Math.random())
+  //   }; 
+  // });
+  
+  console.log(data2)
+  
+  d3.selectAll(".sort-btn")
+    .on("click", function(d) {
+      d3.event.preventDefault();
+      data2.sort(sortBy[this.dataset.sort]);
+      update();
+    });
+  
+  update();
+  
+  function update() {
+    var node = svg2.selectAll(".node")
+      .data(grid(data2), function(d) { return d.id; });
+    node.enter().append("circle")
+      .attr("class", "node")
+      .attr("r", 1e-9)
+      .attr("transform", function(d) { return "translate(" + d.x + "," + d.y + ")"; })
+      .style("fill", function(d) { return d3.interpolateRdYlBu(d.color); });
+    node.transition().duration(1000).delay(function(d, i) { return i * 20; })
+      .attr("r", function(d) { return size(d.size); })
+      .attr("transform", function(d) { return "translate(" + d.x + "," + d.y + ")"; });
+    node.exit().transition()
+      .attr("r", 1e-9)
+      .remove();
+  }
 }

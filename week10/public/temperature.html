@@ -4,10 +4,10 @@
 </head>
 <body>
   <div class="container-fluid">
-    <div class="jumbotron text-center">
-      <h1>It's Cold in Here!</h1>
+    <nav class="navbar fixed-top navbar-dark bg-dark">
+      <a class="navbar-brand" href="#">It's Cold in Here!</a>
       <p><a href='/'>Go back to the menu</a></p>
-    </div>
+    </nav>
     <div class="btn-group btn-group-toggle" data-toggle="buttons">
       <label class="btn btn-secondary active"id="Month">
         <input type="radio" name="Month"> Month
@@ -21,6 +21,9 @@
       <label class="form-check-label" for="gridCheck">Daily Average</label>
     </div>
     <div id='my_dataviz'></div>
+    Sort by
+    <a href="#" class="sort-btn" data-sort="id">Date</a> /
+    <a href="#" class="sort-btn" data-sort="size">Temperature</a>
     <div id='tempreadings'></div>
   </div>
 <script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
@@ -29,7 +32,10 @@
 <script src="https://d3js.org/d3-color.v1.min.js"></script>
 <script src="https://d3js.org/d3-interpolate.v1.min.js"></script>
 <script src="https://d3js.org/d3-scale-chromatic.v1.min.js"></script>
+<script src="d3-scale-radial.js"></script>
 <script src="https://d3js.org/d3.v4.js"></script>
+<script src="d3-grid.js"></script>
+<script src="d3-comparator.js"></script>
 <script src="moment.min.js"></script>
 
 <script src="temperature.js"></script>

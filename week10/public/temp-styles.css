@@ -1,5 +1,9 @@
 html {
     padding: 10%;
+    background-color: #383838;
+}
+.container-fluid{
+    background-color: #383838;
 }
 h1 {
     font-size: 4em;
@@ -9,5 +13,8 @@ h2 {
     color : pink;
 }
 #my_dataviz{
+    text-align: center;
+}
+#tempreadings{
     text-align: center;
 }

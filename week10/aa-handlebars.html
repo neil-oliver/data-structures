@@ -1,13 +1,20 @@
 
 {{#meetings}}
-  <div class="location" data-latlon="{{lat}},{{long}}">
-    <h1>{{extended_address}}</h1>
-    {{#meeting}}
-    <div class="meeting">
-      <h3>{{group}}</h3>
-      Starting at: {{start}}<br>
-      Ends at: {{end}}
+  <div class="location card" data-latlon="{{lat}},{{long}}">
+    <div class="card-body">
+      <h1 class="card-title">{{extended_address}}</h1>
+      <ul class="list-group list-group-flush">
+        {{#meeting}}
+          <li class="list-group-item">
+            <h3 class="card-subtitle">{{group}}</h3>
+            <div class="card-text">
+              Starting at: {{start}}<br>
+              Ends at: {{end}}<br>
+            </div>
+          </li>
+        {{/meeting}}
+      </ul><br>
+      <a class='btn btn-primary' href='http://maps.google.com/?q={{lat}},{{long}}' target='_blank'>Get Directions</a>
     </div>
-    {{/meeting}}
   </div>
  {{/meetings}}

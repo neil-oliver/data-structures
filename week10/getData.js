@@ -169,7 +169,7 @@ function temperature(period){
     return new Promise(resolve => {
         var output = {};
         
-        minDate = minDate || "September 1, 2019";
+        minDate = minDate || "August 1, 2019";
         maxDate = maxDate || moment().format('ll');
         category = category || 'all';
 
@@ -193,7 +193,7 @@ function temperature(period){
         } else {
             var params = {
                 TableName: "process-blog",
-                ProjectionExpression: "created, category, content, title",
+                ProjectionExpression: "created, category, content, title, link",
                 FilterExpression: "created between :minDate and :maxDate",
                  ExpressionAttributeValues: { // the query values
                     ":minDate": {S: new Date(minDate).toISOString()},
@@ -212,10 +212,14 @@ function temperature(period){
             } else {
                 // print all the movies
                 console.log("Scan succeeded.");
+                
+                data.Items.sort(function(a,b){
+                  return new Date(b.created.S) - new Date(a.created.S);
+                });
                 data.Items.forEach(function(item) {
                     console.log("***** ***** ***** ***** ***** \n", item);
                       // use express to create a page with that data
-                    output.blogpost.push({'title':item.title.S, 'content':item.content.S, 'category':item.category.S,'created':moment(item.created.S).format('LL')});
+                    output.blogpost.push({'title':item.title.S, 'content':item.content.S, 'category':item.category.S,'created':moment(item.created.S).format('LL'), 'link': item.link.S});
                 });
     
                 fs.readFile('./blog-handlebars.html', 'utf8', (error, data) => {

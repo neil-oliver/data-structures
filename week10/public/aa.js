@@ -1,9 +1,9 @@
 // map setup
 let mymap = L.map('aa-map').setView([40.734636,-73.994997], 13);
-L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token={accessToken}', {
+L.tileLayer('https://api.mapbox.com/styles/v1/olivn897/{id}/tiles/256/{z}/{x}/{y}?access_token={accessToken}', {
     attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors, <a href="https://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="https://www.mapbox.com/">Mapbox</a>',
     maxZoom: 18,
-    id: 'mapbox.streets',
+    id: 'ck36ly83q16ci1cukx84c60mx',
     accessToken: 'pk.eyJ1Ijoib2xpdm44OTciLCJhIjoiY2szNmx0dHZqMDA0YzNibnpmem1sM25tOCJ9.lkY_8AlzmT_xunxlmXQYDg'
 }).addTo(mymap);
 
@@ -35,7 +35,14 @@ function getResults(){
                 popupText += `<h2>${data[1][i].meeting[x].group}</h2>Start: ${data[1][i].meeting[x].start}<br>End: ${data[1][i].meeting[x].end}<br>`
             }
             L.marker( [data[1][i].lat, data[1][i].long] ).bindPopup(popupText).addTo(markers);
+            
+            if (i==0){
+                $('#next').html(popupText)
+            }
         }
+        //sort out the map tiles not loading properly
+        window.dispatchEvent(new Event('resize'));
+
     });
 }
 

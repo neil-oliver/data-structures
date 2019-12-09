@@ -3,29 +3,25 @@
     <link rel='stylesheet' type='text/css' href='blog-styles.css'/>
 </head>
 <body>
-    <div class="container-fluid">
-    <div class="jumbotron text-center">
+    <div class="container-fluid bg-dark">
+    <div class="navbar justify-content-between navbar-dark bg-dark">
       <h1>Process Blog</h1>
+        <div class="form-inline">
+            <label for="category" class="form-label text-light">Category </label>
+            <select class="form-control mr-sm-2 bg-dark" name="category">
+                <option value="all">All</option>
+                <option value="Data-Structures">Data Structures</option>
+                <option value="Major-Studio">Major Studio</option>
+                <option value="DVIA">DVIA</option>
+            </select>
+            <label for="start" class="form-label text-light">Start Date </label>
+            <input class="form-control mr-sm-2 bg-dark" type="date" value="" name="start">
+            <label for="end" class="form-label text-light">End Date </label>
+            <input class="form-control mr-sm-2 bg-dark" type="date" value="" name="end">
+        </div>
       <p><a href='/'>Go back to the menu</a></p>
     </div>
-    <div class="form-group col-md-6">
-        <label for="category">Category</label>
-        <select class="custom-select" name="category">
-            <option value="all">All</option>
-            <option value="data-structures">Data Structures</option>
-            <option value="development">Development</option>
-        </select>
-    </div>
-    <div class="form-row">
-        <div class="form-group col-md-6">
-            <label for="example-date-input" class="col-2 col-form-label">Start Date</label>
-            <input class="form-control" type="date" value="" name="start">
-        </div>
-        <div class="form-group col-md-6">
-            <label for="example-date-input" class="col-2 col-form-label">End Date</label>
-            <input class="form-control" type="date" value="" name="end">
-        </div>
-    </div>
+
     <div class="testimonial-group">
       <div id='blogpost' class="row text-center"></div>
     </div>

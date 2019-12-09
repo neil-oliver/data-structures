@@ -29,8 +29,8 @@ init()
 
 //expand div width on click
 $("#blogpost").click(function() {
-    $('#blogpost *').removeAttr( 'style');
+    $('#blogpost *').removeClass( 'focuspost');
     if ($(event.target).attr('class') == 'col-xs-4'){
-        $(event.target).attr( 'style','width:50%' )
+        $(event.target).addClass('focuspost' )
     }
 });
