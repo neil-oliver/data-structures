@@ -98,12 +98,12 @@ function aa(after,before,day){
         
         // setup the query using the parameters using the default values or from the HTML passed via the express endpoint
         var thisQuery;
-        thisQuery = "SELECT locations.lat, locations.long, locations.Extended_Address, json_agg(json_build_object('group', groups.Group_Name, 'start', events.Start_at, 'end', events.End_at)) as meeting ";
+        thisQuery = "SELECT locations.lat, locations.long, locations.Extended_Address, locations.Location_Name, locations.Address_Line_1, locations.Zipcode, json_agg(json_build_object('group', groups.Group_Name, 'start', events.Start_at, 'end', events.End_at)) as meeting ";
         thisQuery +=  "FROM groups ";
         thisQuery +=  "INNER JOIN locations ON groups.Location_ID=locations.Location_ID ";
         thisQuery +=  "INNER JOIN events ON groups.Group_ID=events.Group_ID ";
         thisQuery +=  "WHERE events.Day = '" + day +"' AND events.Start_at BETWEEN time '"+ after + "' AND time '" + before + "' ";
-        thisQuery += "GROUP BY locations.lat, locations.long, locations.Extended_Address;"
+        thisQuery += "GROUP BY locations.lat, locations.long, locations.Extended_Address, locations.Location_Name, locations.Address_Line_1, locations.Zipcode;"
         
         // make a request to the database
         client.query(thisQuery, async (err, results) => {
@@ -150,15 +150,28 @@ function temperature(period){
         // Connect to the AWS RDS Postgres database
         const client = new Client(db_credentials);
         client.connect();
+        
+        var secondQuery = `WITH newSensorData as (SELECT * FROM sensorData WHERE sensortime BETWEEN timestamp '${start}' AND timestamp '${end}')
+                  
+                        SELECT
+                        EXTRACT (YEAR FROM sensortime) as sensorYear,
+                        EXTRACT (MONTH FROM sensortime) as sensorMonth, 
+                        EXTRACT (DAY FROM sensortime) as sensorDay,
+                        EXTRACT (HOUR FROM sensortime) as sensorHour, 
+                        AVG(sensorValue::int) as temp_value
+                        FROM newSensorData
+                        GROUP BY sensorYear, sensorMonth, sensorDay, sensorHour
+                        ORDER BY sensorYear, sensorMonth, sensorDay, sensorHour;`;
 
         var thisQuery = "SELECT * FROM sensorData ";
         thisQuery +=  "WHERE sensortime BETWEEN timestamp '"+ start + "' AND timestamp '" + end;
         thisQuery +=  "';";
     
-        client.query(thisQuery, async (err, results) => {
+        client.query(secondQuery, async (err, results) => {
             if (err) {
                 console.log(err);
             } else {
+                console.log(results.rows)
                 resolve(results.rows)
             }
         });
@@ -216,11 +229,7 @@ function temperature(period){
                 data.Items.sort(function(a,b){
                   return new Date(b.created.S) - new Date(a.created.S);
                 });
-                data.Items.forEach(function(item) {
-                    console.log("***** ***** ***** ***** ***** \n", item);
-                      // use express to create a page with that data
-                    output.blogpost.push({'title':item.title.S, 'content':item.content.S, 'category':item.category.S,'created':moment(item.created.S).format('LL'), 'link': item.link.S});
-                });
+ 
     
                 fs.readFile('./blog-handlebars.html', 'utf8', (error, data) => {
                     var template = handlebars.compile(data);

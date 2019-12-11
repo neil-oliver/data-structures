@@ -35,7 +35,7 @@ h3 {
 }
 
 #meetings{
-    max-height: 28em;
+    max-height: 25em;
     overflow-y: scroll;
 }
 
@@ -57,5 +57,16 @@ h3 {
 }
 
 #nextmeeting{
-    font-size: 80%;
+    font-size: 100%;
+    padding-top: 2em;
+    padding-bottom: 3em;
+
 }
+
+#next{
+    padding-top: 2em;
+}
+h1 #next{
+    font-size: 2em;
+}
+

@@ -31,13 +31,18 @@ function getResults(){
         // loop through the JSON data and add markers to the map
         for (var i=0; i<data[1].length; i++) {
             var popupText = `<h1>${data[1][i].extended_address}</h1>`
+            var divText = `<h1>${data[1][i].location_name}</h1><h1>${data[1][i].address_line_1}</h1><h1>New York, ${data[1][i].zipcode}</h1><br>`
             for (x in data[1][i].meeting){
                 popupText += `<h2>${data[1][i].meeting[x].group}</h2>Start: ${data[1][i].meeting[x].start}<br>End: ${data[1][i].meeting[x].end}<br>`
+                if (x == 0){
+                divText += `<h2>${data[1][i].meeting[x].group}</h2>Start: ${data[1][i].meeting[x].start} &nbsp End: ${data[1][i].meeting[x].end}`
+                }
             }
             L.marker( [data[1][i].lat, data[1][i].long] ).bindPopup(popupText).addTo(markers);
             
             if (i==0){
-                $('#next').html(popupText)
+                $('#next').html(divText)
+                
             }
         }
         //sort out the map tiles not loading properly

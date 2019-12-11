@@ -1,4 +1,6 @@
+const parseNewDate = d3.timeParse("%Y-%m-%dT%H")
 const parseDate = d3.timeParse("%Y-%m-%dT%H:%M:%S.%LZ")
+
 
 // for the original unfiltered data
 var dbData;
@@ -19,7 +21,7 @@ $(function(){
     $("input, label").on("click", function(){
       if ($(this).attr('id') == 'Week'){
         //filter data using moment
-        data = dbData.filter(d => moment(d.sensortime).isAfter(weekAgo));
+        data = dbData.filter(d => moment(parseNewDate(d.sensoryear + '-' + d.sensormonth + '-' + d.sensorday + 'T' + d.sensorhour)).isAfter(weekAgo));
         sortWeatherData('Week');
       } else if ($(this).attr('id') == 'Month'){
         //reset data
@@ -27,7 +29,7 @@ $(function(){
         sortWeatherData('Month');
       } else if ($('#Week').hasClass("active")){
         //do this for the checked box
-        data = dbData.filter(d => moment(d.sensortime).isAfter(weekAgo));
+        data = dbData.filter(d => moment(parseNewDate(d.sensoryear + '-' + d.sensormonth + '-' + d.sensorday + 'T' + d.sensorhour)).isAfter(weekAgo));
         sortWeatherData('Week');
       } else if ($('#Month').hasClass("active")){
         data = dbData;
@@ -77,7 +79,7 @@ function getResults(val){
     var parameters = { period: val };
     $.get( '/temperature',parameters, function(d) {
         dbData = d;
-        data = d;
+        data = d; 
     });
 }
 
@@ -134,20 +136,20 @@ function draw(){
     parser = d3.timeParse("%Y-%m-%d")
     
     data = d3.nest()
-      .key(function(d) { return formatter(parseDate(d.sensortime));})
+      .key(function(d) { return formatter(parseNewDate(d.sensoryear + '-' + d.sensormonth + '-' + d.sensorday + 'T' + d.sensorhour));})
         .rollup(function(d) { 
-        return d3.mean(d, function(g) {return g.sensorvalue; });
+        return d3.mean(d, function(g) {return g.temp_value; });
     }).entries(data);
-    
+
   } else {
     
     formatter = d3.timeFormat("%Y-%m-%dT%H:%M:%S.%LZ");
     parser = d3.timeParse("%Y-%m-%dT%H:%M:%S.%LZ")
     
     data = d3.nest()
-      .key(function(d) { return formatter(parseDate(d.sensortime));})
+      .key(function(d) { return formatter(parseNewDate(d.sensoryear + '-' + d.sensormonth + '-' + d.sensorday + 'T' + d.sensorhour));})
         .rollup(function(d) { 
-        return d3.mean(d, function(g) {return g.sensorvalue; });
+        return d3.mean(d, function(g) {return g.temp_value; });
     }).entries(data);
     
   }
@@ -365,11 +367,11 @@ function drawWeather(){
 
 //////////////////////////////////////////////////////
 // The Dots
-var h = 1000;
-var w = 1000;
+var h = 1300;
+var w = 1300;
 
 var grid = d3.grid()
-  .size([800, 800]);
+  .size([1100, 1100]);
 
 //var color = d3.interpolateRdYlBu()
 
@@ -404,14 +406,7 @@ function drawDots(){
         return {id:d.key, size:1+colorScale(d.value)*9 , color: 1-colorScale(d.value) }
       })
   
-  // var data2 = d3.range(17).map(function(d) { 
-  //   return {
-  //     id: d,
-  //     size: 1 + Math.floor(Math.random() * 9),
-  //     color: Math.floor(Math.random())
-  //   }; 
-  // });
-  
+
   console.log(data2)
   
   d3.selectAll(".sort-btn")
@@ -421,16 +416,18 @@ function drawDots(){
       update();
     });
   
+        
   update();
   
   function update() {
+    
     var node = svg2.selectAll(".node")
       .data(grid(data2), function(d) { return d.id; });
     node.enter().append("circle")
       .attr("class", "node")
       .attr("r", 1e-9)
       .attr("transform", function(d) { return "translate(" + d.x + "," + d.y + ")"; })
-      .style("fill", function(d) { return d3.interpolateRdYlBu(d.color); });
+      .style("fill", function(d) { return d3.interpolateWarm(d.color); });
     node.transition().duration(1000).delay(function(d, i) { return i * 20; })
       .attr("r", function(d) { return size(d.size); })
       .attr("transform", function(d) { return "translate(" + d.x + "," + d.y + ")"; });
