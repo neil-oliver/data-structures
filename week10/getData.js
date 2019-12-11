@@ -222,6 +222,7 @@ function temperature(period){
         function onScan(err, data) {
             if (err) {
                 console.error("Unable to scan the table. Error JSON:", JSON.stringify(err, null, 2));
+                throw(err);
             } else {
                 // print all the movies
                 console.log("Scan succeeded.");
@@ -229,8 +230,12 @@ function temperature(period){
                 data.Items.sort(function(a,b){
                   return new Date(b.created.S) - new Date(a.created.S);
                 });
- 
-    
+                
+                data.Items.forEach(function(item) {
+                     console.log("***** ***** ***** ***** ***** \n", item);
+                       // use express to create a page with that data
+                     output.blogpost.push({'title':item.title.S, 'content':item.content.S, 'category':item.category.S,'created':moment(item.created.S).format('LL'), 'link': item.link.S});
+                 });
                 fs.readFile('./blog-handlebars.html', 'utf8', (error, data) => {
                     var template = handlebars.compile(data);
                     var html = template(output);
