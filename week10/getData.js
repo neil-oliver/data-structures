@@ -99,12 +99,12 @@ function aa(after,before,day){
         
         // setup the query using the parameters using the default values or from the HTML passed via the express endpoint
         var thisQuery;
-        thisQuery = "SELECT locations.lat, locations.long, locations.Extended_Address, locations.Location_Name, locations.Address_Line_1, locations.Zipcode, json_agg(json_build_object('group', groups.Group_Name, 'start', events.Start_at, 'end', events.End_at)) as meeting ";
-        thisQuery +=  "FROM groups ";
-        thisQuery +=  "INNER JOIN locations ON groups.Location_ID=locations.Location_ID ";
-        thisQuery +=  "INNER JOIN events ON groups.Group_ID=events.Group_ID ";
-        thisQuery +=  "WHERE events.Day = '" + day +"' AND events.Start_at BETWEEN time '"+ after + "' AND time '" + before + "' ";
-        thisQuery += "GROUP BY locations.lat, locations.long, locations.Extended_Address, locations.Location_Name, locations.Address_Line_1, locations.Zipcode;"
+        thisQuery = `SELECT locations.lat, locations.long, locations.Extended_Address, locations.Location_Name, locations.Address_Line_1, locations.Zipcode, json_agg(json_build_object('group', groups.Group_Name, 'start', events.Start_at, 'end', events.End_at)) as meeting 
+        FROM groups 
+        INNER JOIN locations ON groups.Location_ID=locations.Location_ID 
+        INNER JOIN events ON groups.Group_ID=events.Group_ID 
+        WHERE events.Day = '${day}' AND events.Start_at BETWEEN time '${after}' AND time '${before}' 
+        GROUP BY locations.lat, locations.long, locations.Extended_Address, locations.Location_Name, locations.Address_Line_1, locations.Zipcode;`
         
         // make a request to the database
         client.query(thisQuery, async (err, results) => {

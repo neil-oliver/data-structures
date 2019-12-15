@@ -73,3 +73,6 @@ h1 #next{
     font-size: 2em;
 }
 
+label{
+    padding:0.5rem;
+}

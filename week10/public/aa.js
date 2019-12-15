@@ -2,7 +2,8 @@
 let mymap = L.map('aa-map').setView([40.734636,-73.994997], 13);
 L.tileLayer('https://api.mapbox.com/styles/v1/olivn897/{id}/tiles/256/{z}/{x}/{y}?access_token={accessToken}', {
     attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors, <a href="https://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="https://www.mapbox.com/">Mapbox</a>',
-    maxZoom: 18,
+    maxZoom: 16,
+    minZoom: 13,
     id: 'ck36ly83q16ci1cukx84c60mx',
     accessToken: 'pk.eyJ1Ijoib2xpdm44OTciLCJhIjoiY2szNmx0dHZqMDA0YzNibnpmem1sM25tOCJ9.lkY_8AlzmT_xunxlmXQYDg'
 }).addTo(mymap);
