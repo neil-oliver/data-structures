@@ -1,10 +1,12 @@
 <head>
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    <link href="https://fonts.googleapis.com/css?family=Oswald:200,400,500&display=swap" rel="stylesheet">
     <link rel='stylesheet' type='text/css' href='blog-styles.css'/>
+
 </head>
 <body>
     <div class="container-fluid bg-dark">
-    <div class="navbar justify-content-between navbar-dark bg-dark">
+    <div class="navbar fixed-top justify-content-between navbar-dark bg-dark">
       <h1>Process Blog</h1>
         <div class="form-inline">
             <label for="category" class="form-label text-light">Category </label>
@@ -15,9 +17,37 @@
                 <option value="DVIA">DVIA</option>
             </select>
             <label for="start" class="form-label text-light">Start Date </label>
-            <input class="form-control mr-sm-2 bg-dark" type="date" value="" name="start">
+            <select class="form-control mr-sm-2 bg-dark" name="start">
+                <option value="1">January</option>
+                <option value="2">February</option>
+                <option value="3">March</option>
+                <option value="4">April</option>
+                <option value="5">May</option>
+                <option value="6">June</option>
+                <option value="7">July</option>
+                <option value="8">August</option>
+                <option value="9">September</option>
+                <option value="10">October</option>
+                <option value="11">November</option>
+                <option value="12">December</option>
+            </select>
+            <select class="form-control mr-sm-2 bg-dark" name="start-year"></select>
             <label for="end" class="form-label text-light">End Date </label>
-            <input class="form-control mr-sm-2 bg-dark" type="date" value="" name="end">
+            <select class="form-control mr-sm-2 bg-dark" name="end">
+                <option value="1">January</option>
+                <option value="2">February</option>
+                <option value="3">March</option>
+                <option value="4">April</option>
+                <option value="5">May</option>
+                <option value="6">June</option>
+                <option value="7">July</option>
+                <option value="8">August</option>
+                <option value="9">September</option>
+                <option value="10">October</option>
+                <option value="11">November</option>
+                <option value="12">December</option>
+            </select>
+            <select class="form-control mr-sm-2 bg-dark" name="end-year"></select>
         </div>
       <p><a href='/'>Go back to the menu</a></p>
     </div>
@@ -30,5 +60,5 @@
     <script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
- <script src="blog.js"></script>
+<script src="blog.js"></script>
 </body>

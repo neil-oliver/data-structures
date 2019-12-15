@@ -59,6 +59,20 @@ mymap.on('click', function(ev){
 });
 
 function init(){
+    var days = ['Sundays','Mondays','Tuesdays','Wednesdays','Thursdays','Fridays','Saturdays'];
+    $(`select[name="day"]`).val(days[new Date().getDay()])
+    
+
+    var currenthour = new Date().getHours()
+    if (currenthour>11){
+        $(`select[name="after"]`).val(`${currenthour-11}:00 PM`)
+    } else {
+        $(`select[name="after"]`).val(`${currenthour+1}:00 AM`)
+    }
+    
+    $(`select[name="before"]`).val(`11:00 PM`)
+
+
     getResults()
 }
 

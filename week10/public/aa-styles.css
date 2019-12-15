@@ -1,15 +1,18 @@
 html {
-  padding: 10%;
   font-size: 80%;
-  background-image: linear-gradient(to bottom right, #41b6c4,#7fcdbb);
 }
 
 body{
-    background-color: rgba(0, 0, 9, 0);
+      padding-top: 5%;
+      padding-bottom: 5%;
+      padding-left: 10%;
+      padding-right: 10%;
+      height:100vh;
+  background-image: linear-gradient(to bottom right, #41b6c4,#7fcdbb);
+
     font-family: 'Poppins', sans-serif;
-
-
 }
+
 
 h1 {
     font-size: 1.5em;
@@ -39,9 +42,6 @@ h3 {
     overflow-y: scroll;
 }
 
-.container{
-
-}
 
 #rightcol{
     padding:3em;
@@ -57,9 +57,12 @@ h3 {
 }
 
 #nextmeeting{
+    border-radius: 5px;
+    border: 1px solid lightgray;
     font-size: 100%;
     padding-top: 2em;
     padding-bottom: 3em;
+    margin-left: -15px;
 
 }
 

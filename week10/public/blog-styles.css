@@ -1,16 +1,29 @@
-html {
-    font-size: 100%;
-}
 h1 {
     font-size: 1.5rem;
-    color : purple;
+    text-transform: uppercase;
+    font-weight: 500;
+    transition: .2s ease-in-out;
+
+
 }
+
 h2 {
-    font-size: 1.2rem;
-    color : pink;
+    font-size: 1rem;
+    font-weight: 400;
+
+
 }
 h3 {
-    font-size: 1.1rem;
+    font-size: 1rem;
+    font-weight: 400;
+
+}
+
+body{
+    padding-top: 50px;
+    font-family: 'Oswald', sans-serif;
+    font-size: 100%;
+    font-weight: 100;
 }
 
 
@@ -23,40 +36,75 @@ height: 100%;
 
 }
 .testimonial-group > .row > .col-xs-4 {
+        position: relative;
+
   flex: 0 0 auto;
   width:25%;
-  transition: .2s ease-in-out;
+  transition: .4s ease-in-out;
 }
 .testimonial-group p {
   visibility: hidden;
-  transition: .2s ease-in-out;
+  transition: .4s ease-in-out;
 }
 
 .testimonial-group a {
   visibility: hidden;
-  transition: .2s ease-in-out;
+  transition: .4s ease-in-out;
+}
+
+#expandpanel{
+    position: absolute;
+    width:100%;
+    height: 0;
+    background-color: rgba(100,100,100,0.5);
+    bottom:0;
+    transition: .4s ease-in-out;
+    transition-delay: 0s;
+    z-index: 0;
 }
 
 /* Decorations */
 .col-xs-4 { color: #fff; font-size: 48px; padding-bottom: 20px; padding-top: 18px; }
-.col-xs-4:nth-child(5n+1) { background: #0396A6; }
-.col-xs-4:nth-child(5n+2) { background: #04BFBF; }
-.col-xs-4:nth-child(5n+3) { background: #D98E04; }
-.col-xs-4:nth-child(5n+4) { background: #F20505; }
-.col-xs-4:nth-child(5n+5) { background: #730202; }
+.col-xs-4:nth-child(5n+2) { background-image: linear-gradient(to bottom, #ed4264,#FFEDBC); }
+.col-xs-4:nth-child(5n+3) { background-image: linear-gradient(to bottom, #514A9D,#24C6DC); }
+.col-xs-4:nth-child(5n+1) { background-image: linear-gradient(to bottom, #DD2476,#FF512F); }
+.col-xs-4:nth-child(5n+4) { background-image: linear-gradient(to bottom, #3D7EAA,#FFE47A); }
+.col-xs-4:nth-child(5n+5) { background-image: linear-gradient(to bottom, #FF512F,#F09819); }
 
 .post{
     margin: 2rem;
-    font-size: 1rem;
+    font-size: 1.2rem;
+    padding-left: 7.5%;
+    padding-right: 7.5%;
 }
 
 .focuspost{
     width:50% !important;
+    z-index:99;
+    box-shadow: inset -20px 0 18px -22px black, inset 20px 0 18px -22px black;
 }
 
 .focuspost p{
     visibility: visible !important;
+    padding-top: 5%;
 }
 .focuspost a{
     visibility: visible !important;
+}
+.focuspost h1{
+    font-size: 3rem;
+}
+
+.focuspost #expandpanel{
+    height:15% !important;
+    width:100%;
+    transition: width 0.4s ease, height 0.2s 0.5s ease; 
+}
+select{
+    -moz-appearance: none; 
+    -webkit-appearance: none; 
+    appearance: none;
+}
+label{
+    padding:1rem;
 }

@@ -1,15 +1,48 @@
 <head>
+    <link href="https://fonts.googleapis.com/css?family=Playfair+Display:400,700,900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
     <link rel='stylesheet' type='text/css' href='styles.css'/>
 </head>
 <body>
-  <div class="container">
+  <div class="container-fluid">
     <div class="jumbotron text-center">
       <h1>Data Structures</h1>
     </div>
-    <p><a href='./blog.html'>Go to the Blog</a></p>
-    <p><a href='./aa.html'>AA</a></p>
-    <p><a href='./temperature.html'>It's cold in here!</a></p>
+    <div class='row text-center'>
+      <div class='col'>
+      <div class="card tempcard" style="width: 20rem;">
+        <img src="./images/temp-1.png" class="card-img-top" alt="...">
+        <div class="card-body">
+          <h5 class="card-title">Is It Cold In Here?</h5>
+          <p class="card-text">An investigation into if a landlord is abiding by the NYC Heat Law.</p>
+          <a href="./temperature.html" class="btn btn-primary">Temperature Sensor</a>
+          <a href="https://github.com/neil-oliver/data-structures/tree/master/week10" class="btn btn-primary">GitHub</a>
+        </div>
+      </div>
+      </div>
+      <div class='col'>
+        <div class="card aacard" style="width: 20rem;">
+          <img src="./images/aa-1.png" class="card-img-top" alt="...">
+          <div class="card-body">
+            <h5 class="card-title">Alcoholics Anonymous</h5>
+            <p class="card-text">Quickly view and find your nearest meeting from across Manhattan.</p>
+            <a href="./aa.html" class="btn btn-primary">Meeting Finder</a>
+            <a href="https://github.com/neil-oliver/data-structures/tree/master/week10" class="btn btn-primary">GitHub</a>
+          </div>
+        </div>
+      </div>
+      <div class='col'>
+        <div class="card blogcard" style="width: 20rem;">
+          <img src="./images/blog-1.png" class="card-img-top" alt="...">
+          <div class="card-body">
+            <h5 class="card-title">Process Blog</h5>
+            <p class="card-text">Tracking the progress of the Fall 2019 term for the MSDV course.</p>
+            <a href="./blog.html" class="btn btn-primary">Blog</a>
+            <a href="https://github.com/neil-oliver/data-structures/tree/master/week10" class="btn btn-primary">GitHub</a>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
 
     <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>

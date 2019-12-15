@@ -36,7 +36,9 @@ $(function(){
         sortWeatherData('Month')
       }
       draw()
+      //call the dots
       drawDots()
+
     });
 });
 
@@ -55,10 +57,10 @@ function getWeatherData(){
       return {key:moment(d.time).toISOString(), value:d.temperature * 9 / 5 + 32}
     })
     weatherData = monthWeather
-    //drawWeather()
-    draw();
-    drawDots()
 
+    draw();
+    //call the dots
+    drawDots()
 
   });
 }
@@ -72,7 +74,7 @@ function sortWeatherData(period){
   } else {
     weatherData = monthWeather
   }
-
+  
 }
 
 function getResults(val){
@@ -93,8 +95,15 @@ init()
 
 var margin = {top: 20, right: 10, bottom: 20, left: 10};
 
-var width = 1000 - margin.left - margin.right,
-	height = 1000 - margin.top - margin.bottom;
+var width = 600 - margin.left - margin.right,
+	height = 600 - margin.top - margin.bottom;
+ 
+var tip = d3.tip()
+  .attr('class', 'd3-tip')
+  .offset([-10, 0])
+  .html(function(d) {
+    return "<span style='color:white'>" + d.value.toFixed(2) + " °F</span>";
+  })
 
 // append the svg object to the body of the page
 var svg = d3.select("#my_dataviz").append("svg")
@@ -102,15 +111,18 @@ var svg = d3.select("#my_dataviz").append("svg")
       .attr("height", height + margin.top + margin.bottom)
     .append("g")
     	.attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+    	
+svg.call(tip);
+
     
 var parser;
 var formatter;
 
 var colorScale = d3.scaleLinear()
-  .domain([32, 80])
+  .domain([25, 80])
   .range([1, 0]);
     
-var innerRadius = 200,
+var innerRadius = 140,
     outerRadius = Math.min(width, height) / 2 - 6;
 
 var formatMonth = d3.timeFormat("%d %b");
@@ -154,6 +166,7 @@ function draw(){
     
   }
 
+
   
 var line = d3.lineRadial()
 		.angle(function(d) { return x(parser(d.key)); })
@@ -164,7 +177,7 @@ var line = d3.lineRadial()
   //////////////////////////////////////////////////////////////////////////
 
   x.domain(d3.extent(data, function(d) { return parser(d.key); }));
-	y.domain(d3.extent(data, function(d) { return d.value; }));
+	y.domain([20,80]);
   
   var linePlot = g.append("path")
   	.datum(data)
@@ -249,8 +262,8 @@ var line = d3.lineRadial()
   setTimeout(function(){ 
       
       x.domain(d3.extent(data, function(d) { return parser(d.key); }));
-	    y.domain(d3.extent(data, function(d) { return d.value; }));
-    
+	    y.domain([20,80]);
+	    
     var dots = g.selectAll(".dot")
       .data(data)
       .enter()
@@ -267,10 +280,13 @@ var line = d3.lineRadial()
             this.attr('class', 'focus')
     		})
     		.attr('opacity',0)
+    		.on('mouseover', tip.show)
+        .on('mouseout', tip.hide)
     		.transition()
           .duration(200)
           .ease(d3.easeLinear)
         .attr('opacity',1);
+        
   
   }, 1500);
 		
@@ -304,7 +320,7 @@ function drawWeather(){
         return d3.mean(d, function(g) {return g.value; });
     }).entries(weatherData);
   }
-  
+    
   
   var line = d3.lineRadial()
   		.angle(function(d) { return x(parser(d.key)); })
@@ -313,13 +329,13 @@ function drawWeather(){
 
   //////////////////////////////////////////////////////////////////////////
 
-  x.domain(d3.extent(weatherData, function(d) { return parser(d.key); }));
-	y.domain(d3.extent(weatherData, function(d) { return d.value; }));
+  x.domain(d3.extent(data, function(d) { return parser(d.key); }));
+	y.domain([20,80]);
   
   setTimeout(function(){
     
-    x.domain(d3.extent(weatherData, function(d) { return parser(d.key); }));
-	  y.domain(d3.extent(weatherData, function(d) { return d.value; }));
+    x.domain(d3.extent(data, function(d) { return parser(d.key); }));
+	  y.domain([20,80]);
   
     var dots = g.selectAll(".dot")
       .data(weatherData)
@@ -331,12 +347,11 @@ function drawWeather(){
         })
         .attr("cy", function(d) { return y(d.value) })
         .attr("r", 2)
-        .style("stroke", "#1E90FF")   // set the line colour
-        .style("fill", "#1E90FF")   // set the fill colour 
-          .on("mouseover", function(a, b, c) { 
-            this.attr('class', 'focus')
-    		})
+        .style("stroke", "#a4de26")   // set the line colour
+        .style("fill", "#a4de26")   // set the fill colour 
     		.attr('opacity',0)
+    		.on('mouseover', tip.show)
+        .on('mouseout', tip.hide)
     		.transition()
           .duration(200)
           .ease(d3.easeLinear)
@@ -348,7 +363,7 @@ function drawWeather(){
   var linePlot = g.append("path")
   	.datum(weatherData)
     .attr("fill", "none")
-    .attr("stroke", "#1E90FF")
+    .attr("stroke", "#a4de26")
     .attr("stroke-width", 1)
     .attr("stroke-opacity", 0.7)
     .attr("d", line);
@@ -362,18 +377,25 @@ function drawWeather(){
     .duration(1500)
     .ease(d3.easeLinear)
     .attr("stroke-dashoffset", 0);
-    
 }
 
 //////////////////////////////////////////////////////
 // The Dots
-var h = 1300;
-var w = 1300;
+var h = 600;
+var w = 600;
+
+var tip2 = d3.tip()
+  .attr('class', 'd3-tip')
+  .offset([-10, 0])
+  .html(function(d) {
+    return "<span style='color:white'>" + moment(d.id).format('MMMM Do YYYY, h:mm:ss a') + "</span>";
+  })
+  
+svg.call(tip2)
 
 var grid = d3.grid()
-  .size([1100, 1100]);
+  .size([400, 400]);
 
-//var color = d3.interpolateRdYlBu()
 
 var size = d3.scaleSqrt()
   .domain([0, 9])
@@ -397,8 +419,8 @@ var svg2 = d3.select("#tempreadings").append("svg")
   .attr("height", h)
   .append("g")
   .attr("transform", "translate(100,100)")
-    
-    
+
+
 function drawDots(){
 
   var data2 = data.map(function(d){
@@ -415,7 +437,7 @@ function drawDots(){
       data2.sort(sortBy[this.dataset.sort]);
       update();
     });
-  
+    
         
   update();
   
@@ -427,9 +449,11 @@ function drawDots(){
       .attr("class", "node")
       .attr("r", 1e-9)
       .attr("transform", function(d) { return "translate(" + d.x + "," + d.y + ")"; })
-      .style("fill", function(d) { return d3.interpolateWarm(d.color); });
+      .style("fill", function(d) { return d3.interpolateWarm(d.color); })
+      .on('mouseover', tip2.show)
+      .on('mouseout', tip2.hide);
     node.transition().duration(1000).delay(function(d, i) { return i * 20; })
-      .attr("r", function(d) { return size(d.size); })
+      .attr("r", function(d) { return size(d.size/3); })
       .attr("transform", function(d) { return "translate(" + d.x + "," + d.y + ")"; });
     node.exit().transition()
       .attr("r", 1e-9)

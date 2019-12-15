@@ -43,7 +43,8 @@ app.get('/blog', async function (req, res) {
         res.send(await processBlog());
     } else {
         // when any value is changed in the HTML (via a jQuery listener) use the selected values to recall the processBlog function. 
-        res.send(await processBlog(req.query.start,req.query.end,req.query.category));
+        res.send(await processBlog(req.query.start, req.query.startyear, req.query.end, req.query.endyear, req.query.category));
+        console.log(req.query)
     }
 });
 
@@ -178,13 +179,19 @@ function temperature(period){
     });
  }
  
- function processBlog(minDate, maxDate, category){
+ function processBlog(minMonth, minYear, maxMonth, maxYear, category){
     return new Promise(resolve => {
         var output = {};
         
-        minDate = minDate || "August 1, 2019";
-        maxDate = maxDate || moment().format('ll');
+        minMonth = minMonth || "January";
+        maxMonth = maxMonth || "December";
+        minYear = minYear || "2019";
+        maxYear = maxYear || "2019";
         category = category || 'all';
+
+        var minDate = minMonth+' 1,'+minYear
+        var maxDate = maxMonth+' 1,'+maxYear
+
 
         output.blogpost = [];
         

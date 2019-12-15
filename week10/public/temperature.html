@@ -1,4 +1,5 @@
 <head>
+    <link href="https://fonts.googleapis.com/css?family=Titillium+Web:200,400&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
     <link rel='stylesheet' type='text/css' href='temp-styles.css'/>
 </head>
@@ -8,23 +9,39 @@
       <a class="navbar-brand" href="#">It's Cold in Here!</a>
       <p><a href='/'>Go back to the menu</a></p>
     </nav>
-    <div class="btn-group btn-group-toggle" data-toggle="buttons">
-      <label class="btn btn-secondary active"id="Month">
-        <input type="radio" name="Month"> Month
-      </label>
-      <label class="btn btn-secondary" id="Week">
-        <input type="radio" name="Week"> Week
-      </label>
+    <div id='intro'>
+        The New York City Heat Law states that from October 1 to May 31:
+
+Property owners must provide tenants with heat under the following conditions:
+
+Between the hours of 6 a.m. and 10 p.m., if the outside temperature falls below 55 degrees, the inside temperature is required to be at least 68 degrees Fahrenheit; and,
+Between the hours of 10 p.m. and 6 a.m., the inside temperature is required to be at least 62 degrees Fahrenheit.<br><br>
+The radial chart below tracks the temperature of an apartment on the Upper West Side of Manhattan (pink) against the external termperature (green) as provided by meteostat.net.
     </div>
-    <div class="form-check">
-      <input class="form-check-input" type="checkbox" id="gridCheck">
-      <label class="form-check-label" for="gridCheck">Daily Average</label>
+    <div class='row form-group'>
+    
+      <div class='col'>
+        <div class="btn-group btn-group-toggle" data-toggle="buttons">
+          <label class="btn btn-secondary active"id="Month">
+            <input type="radio" name="Month"> Month
+          </label>
+          <label class="btn btn-secondary" id="Week">
+            <input type="radio" name="Week"> Week
+          </label>
+        </div>
+        <div class="form-check">
+            <input class="form-check-input" type="checkbox" id="gridCheck">
+            <label class="form-check-label" for="gridCheck">Daily Average</label>
+        </div>
+        <div id='my_dataviz'></div>
+      </div>
+      <div class='col'>
+        Sort by
+        <a href="#" id='idlink' class="sort-btn" data-sort="id">Date</a> /
+        <a href="#" id='sizelink' class="sort-btn" data-sort="size">Temperature</a>
+        <div id='tempreadings'></div>
+      </div>
     </div>
-    <div id='my_dataviz'></div>
-    Sort by
-    <a href="#" class="sort-btn" data-sort="id">Date</a> /
-    <a href="#" class="sort-btn" data-sort="size">Temperature</a>
-    <div id='tempreadings'></div>
   </div>
 <script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
@@ -33,6 +50,7 @@
 <script src="https://d3js.org/d3-interpolate.v1.min.js"></script>
 <script src="https://d3js.org/d3-scale-chromatic.v1.min.js"></script>
 <script src="d3-scale-radial.js"></script>
+<script src="d3-tip.js"></script>
 <script src="https://d3js.org/d3.v4.js"></script>
 <script src="d3-grid.js"></script>
 <script src="d3-comparator.js"></script>
