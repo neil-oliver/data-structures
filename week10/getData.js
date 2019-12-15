@@ -231,7 +231,6 @@ function temperature(period){
                 console.error("Unable to scan the table. Error JSON:", JSON.stringify(err, null, 2));
                 throw(err);
             } else {
-                // print all the movies
                 console.log("Scan succeeded.");
                 
                 data.Items.sort(function(a,b){
