@@ -43,6 +43,7 @@ $(function(){
 });
 
 
+
 function getWeatherData(){
   
   var start = monthAgo.format('Y-M-D')
@@ -165,6 +166,7 @@ function draw(){
     }).entries(data);
     
   }
+  console.log(data)
 
 
   
