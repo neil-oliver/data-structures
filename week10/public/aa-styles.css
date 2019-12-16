@@ -76,3 +76,12 @@ h1 #next{
 label{
     padding:0.5rem;
 }
+.leaflet-popup-content-wrapper {
+    overflow-y: auto;
+    max-height: 15em;
+
+}
+.list-group-item{
+    padding-left: 0;
+    padding-right: 0;
+}

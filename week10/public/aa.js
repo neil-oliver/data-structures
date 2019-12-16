@@ -23,7 +23,7 @@ function getResults(){
     var parameters = { day: $('select[name="day"]').val(), after: $('select[name="after"]').val(), before: $('select[name="before"]').val() };
     $.get( '/aa',parameters, function(data) {
         // the return data (hanlebars html) is added to the meetings DIV.
-        $('#meetings').html(data[0])
+        $('#meetings').html(data[0].replace(/,/g,',<br>'))
         
         console.log(data[1])
         
@@ -31,12 +31,12 @@ function getResults(){
         
         // loop through the JSON data and add markers to the map
         for (var i=0; i<data[1].length; i++) {
-            var popupText = `<h1>${data[1][i].extended_address}</h1>`
+            var popupText = `<h1>${data[1][i].extended_address.replace(/,/g,',<br>')}</h1>`
             var divText = `<h1>${data[1][i].location_name}</h1><h1>${data[1][i].address_line_1}</h1><h1>New York, ${data[1][i].zipcode}</h1><br>`
             for (x in data[1][i].meeting){
                 popupText += `<h2>${data[1][i].meeting[x].group}</h2>Start: ${data[1][i].meeting[x].start}<br>End: ${data[1][i].meeting[x].end}<br>`
                 if (x == 0){
-                divText += `<h2>${data[1][i].meeting[x].group}</h2>Start: ${data[1][i].meeting[x].start} &nbsp End: ${data[1][i].meeting[x].end}`
+                divText += `<h2>${data[1][i].meeting[x].group}</h2><strong>Start: </strong>${data[1][i].meeting[x].start} &nbsp <strong>End: </strong>${data[1][i].meeting[x].end}`
                 }
             }
             L.marker( [data[1][i].lat, data[1][i].long] ).bindPopup(popupText).addTo(markers);

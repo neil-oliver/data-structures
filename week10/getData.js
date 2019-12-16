@@ -190,7 +190,7 @@ function temperature(period){
         category = category || 'all';
 
         var minDate = minMonth+' 1,'+minYear
-        var maxDate = maxMonth+' 1,'+maxYear
+        var maxDate = maxMonth+' 28,'+maxYear
 
 
         output.blogpost = [];

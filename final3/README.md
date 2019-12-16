@@ -94,6 +94,8 @@ Therefore filtering by time and by daily average for both the sensor data and th
 Time filtering is dealt with on any selection change and reformatting of data including createing date/time objects are dealt with within the D3 ```draw()``` function.
 
 ### Filtering by time
+![Filtered Temperature Sensor Screenshot](./temperature-screenshot-2.png)
+
 ```javascript
 $(function(){
     $("input, label").on("click", function(){

@@ -59,12 +59,12 @@ class BlogEntry {
 fs.createReadStream('Blog-posts.csv')
   .pipe(csv())
   .on('data', (row) => {
-    console.log(row);
+    //console.log(row);
     
     // construct the blog post using the data
     // reminder: constructor(category, created, title, author, content, tags published, tags, images, emotion, activity, food) 
     var post = new BlogEntry(row.Category, moment(row.Created).toISOString(), row.Title, row.Author, row.Content, row.Link, true, [row.Tags], [row.Images], row.Emotions, row.Activity, [row.Food]);
-    console.log(post)
+    //console.log(post)
     // set up putItem for DynamoDB
     var params = {};
     params.Item = post; 
@@ -74,7 +74,10 @@ fs.createReadStream('Blog-posts.csv')
     // attempt to save the information and display a message on success or error
     dynamodb.putItem(params, function (err, data) {
     
-    if (err != null){console.log(err)}
+    if (err != null){
+      console.log(post)
+      console.log(err)
+    }
     
     });
     
